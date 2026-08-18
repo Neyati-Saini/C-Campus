@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C.Campus OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Base Colors */
+    --paper: #F6F3EC;
+    --paper-raised: #FFFFFF;
+    --ink: #202420;
+    --ink-soft: #5B6158;
+    --line: #DCD5C4;
+    
+    /* Workspace Palettes */
+    --moss: #2F6F4E;
+    --moss-soft: #E7F0EA;
+    --brick: #B5502F;
+    --brick-soft: #F5E7DF;
+    --denim: #35597A;
+    --denim-soft: #E5EBF0;
+
+    /* Dynamic Theme Variables (Defaults to Academics) */
+    --theme-main: var(--moss);
+    --theme-soft: var(--moss-soft);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; }
+
+  /* ---------- macOS-Style Top Bar ---------- */
+  .os-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    height: 56px;
+    background: rgba(246, 243, 236, 0.95);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+
+  /* Logo Replacement */
+  .os-controls {
+    display: flex;
+    align-items: center;
+    width: 200px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Fraunces', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--theme-main);
+    transition: opacity 0.2s ease, color 0.4s ease;
+  }
+  
+  .logo:hover { opacity: 0.8; }
+
+  .logo-mark {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--theme-main);
+    color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transform: rotate(-3deg);
+    transition: background-color 0.4s ease;
+  }
+
+  .os-tabs {
+    display: flex;
+    gap: 32px;
+  }
+
+  .tab-btn {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    position: relative;
+    transition: color 0.4s ease;
+  }
+
+  .tab-btn.active {
+    color: var(--theme-main);
+  }
+
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--theme-main);
+    transform: scaleX(0);
+    transition: transform 0.4s ease, background-color 0.4s ease;
+  }
+
+  .tab-btn.active::after {
+    transform: scaleX(1);
+  }
+
+  /* Blank spacer to keep tabs centered after removing the button */
+  .topbar-spacer {
+    width: 200px;
+  }
+
+  /* ---------- Main Application Window ---------- */
+  .app-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ---------- Contextual Sidebar ---------- */
+  .sidebar {
+    width: 260px;
+    background: var(--paper-raised);
+    border-right: 1px solid var(--line);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transition: background-color 0.4s ease;
+  }
+
+  .sidebar-section h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-nav {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sidebar-nav li {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .sidebar-nav li:hover, .sidebar-nav li.active {
+    background: var(--theme-soft);
+    color: var(--theme-main);
+    font-weight: 500;
+  }
+
+  /* ---------- Main Content Area (Ledger) ---------- */
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    position: relative;
+    background: var(--paper);
+  }
+
+  .content-header {
+    margin-bottom: 32px;
+  }
+
+  .content-header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--theme-main);
+    transition: color 0.4s ease;
+  }
+
+  .ledger {
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  .ledger-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px dashed var(--line);
+    background: var(--theme-soft);
+    transition: background-color 0.4s ease;
+    cursor: pointer; /* Added pointer cursor */
+  }
+  .ledger-head:hover { opacity: 0.9; }
+  .ledger-head .mono { font-size: 0.75rem; color: var(--theme-main); }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s ease;
+    cursor: pointer; /* Added pointer cursor */
+  }
+  .ledger-row:last-child { border-bottom: none; }
+  .ledger-row:hover { background: var(--paper); }
+
+  .ledger-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    background: var(--theme-soft);
+    color: var(--theme-main);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  .ledger-text .title { font-weight: 600; font-size: 0.98rem; }
+  .ledger-text .desc { font-size: 0.82rem; color: var(--ink-soft); }
+
+  .ledger-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    padding: 4px 9px;
+    border-radius: 20px;
+    background: var(--theme-soft);
+    color: var(--theme-main);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* ---------- Read-Only Blur ---------- */
+  .sensitive-data {
+    filter: blur(5px);
+    user-select: none;
+    pointer-events: none;
+    transition: filter 0.3s ease;
+  }
+
+  .unlocked .sensitive-data {
+    filter: blur(0);
+    pointer-events: auto;
+    user-select: auto;
+  }
+
+  /* ---------- Login Modal Popup ---------- */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(32, 36, 32, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    background: var(--paper-raised);
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid var(--line);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+
+  .modal-overlay.show .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none; border: none;
+    font-size: 1.5rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .modal-content h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+
+  .modal-content p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+    background: var(--paper);
+  }
+  
+  .modal-input:focus {
+    outline: 2px solid var(--theme-main);
+    border-color: transparent;
+  }
+
+  .modal-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 5px;
+    background: var(--theme-main);
+    color: var(--paper);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+  
+  .modal-btn:hover {
+    opacity: 0.9;
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="os-topbar">
+    <div class="os-controls">
+      <div class="logo" onclick="openModal()">
+        <span class="logo-mark">C.</span>Campus
+      </div>
+    </div>
+
+    <div class="os-tabs">
+      <button class="tab-btn active" onclick="switchWorkspace('academics')">Academics</button>
+      <button class="tab-btn" onclick="switchWorkspace('marketplace')">Marketplace</button>
+      <button class="tab-btn" onclick="switchWorkspace('workplace')">Workplace</button>
+    </div>
+
+    <!-- Empty div to keep the flexbox layout balanced -->
+    <div class="topbar-spacer"></div>
+  </header>
+
+  <!-- App Window -->
+  <div class="app-container" id="app">
+    
+    <!-- Dynamic Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Sidebar content injected via JS -->
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-header">
+        <h1 id="workspace-title">Academics Hub</h1>
+        <p class="mono" id="workspace-subtitle" style="color: var(--ink-soft); margin-top: 8px;">LEARNING, STUDYING & BUILDING</p>
+      </div>
+
+      <div class="ledger">
+        <!-- Added click handler to trigger modal if locked -->
+        <div class="ledger-head" onclick="handleFeedInteraction()">
+          <span class="mono" id="ledger-title">LIVE ACADEMIC FEED</span>
+          <span class="mono">VERIFIED STUDENTS ONLY</span>
+        </div>
+        
+        <div id="ledger-rows">
+          <!-- Ledger rows injected via JS -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <h2 id="modal-title">Log in to C.Campus</h2>
+      <p id="modal-desc">Enter your verified .edu email to unlock full details.</p>
+      
+      <div id="modal-form">
+        <input type="email" class="modal-input" placeholder="student@college.edu" />
+        <button class="modal-btn" onclick="simulateLogin()">Continue</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Workspace Data & Configuration
+  const workspaces = {
+    academics: {
+      themeMain: 'var(--moss)',
+      themeSoft: 'var(--moss-soft)',
+      title: 'Academics Hub',
+      subtitle: 'LEARNING, STUDYING & BUILDING',
+      ledgerTitle: 'LIVE ACADEMIC FEED',
+      sidebar: [
+        { name: 'Skill Swap', active: true },
+        { name: 'Study Guides', active: false },
+        { name: 'Project Matchmaker', active: false },
+        { name: 'My Repositories', active: false }
+      ],
+      feed: [
+        { icon: 'S', title: 'Trading Intro to C++ tutoring for Graphic Design help', desc: 'Posted 1h ago · <span class="sensitive-data">Contact: sarah.j@college.edu</span>', tag: 'skill swap' },
+        { icon: 'P', title: 'Looking for Frontend Dev for weekend Hackathon', desc: 'Tech stack: React, Tailwind · <span class="sensitive-data">Room 402, Block B</span>', tag: 'matchmaker' },
+        { icon: 'N', title: 'Complete Physics 101 Midterm Notes', desc: 'Verified resource · <span class="sensitive-data">Download 12MB PDF</span>', tag: 'asset market' }
+      ]
+    },
+    marketplace: {
+      themeMain: 'var(--brick)',
+      themeSoft: 'var(--brick-soft)',
+      title: 'Marketplace',
+      subtitle: 'BUYING, RENTING & MONEY MANAGEMENT',
+      ledgerTitle: 'LIVE MARKET FEED',
+      sidebar: [
+        { name: 'Dorm Essentials', active: true },
+        { name: 'Hardware Rentals', active: false },
+        { name: 'Group Split (AI)', active: false },
+        { name: 'My Listings', active: false }
+      ],
+      feed: [
+        { icon: 'M', title: 'Mini-Fridge (Used 1 Semester)', desc: '$45 · <span class="sensitive-data">Pickup: North Dorms, Floor 2</span>', tag: 'for sale' },
+        { icon: 'R', title: 'Heavy-Duty Carpet Cleaner Rental', desc: '$10/day · <span class="sensitive-data">Message Mike: m.ross@college.edu</span>', tag: 'rental' },
+        { icon: '₹', title: 'Pizza Order Split: Study Group', desc: 'Total $32.40 · <span class="sensitive-data">Pay request sent to 3 members</span>', tag: 'group split' }
+      ]
+    },
+    workplace: {
+      themeMain: 'var(--denim)',
+      themeSoft: 'var(--denim-soft)',
+      title: 'Workplace',
+      subtitle: 'EARNING, FREELANCING & CAREERS',
+      ledgerTitle: 'LOCAL MICRO-GIGS & INTERNSHIPS',
+      sidebar: [
+        { name: 'Micro-Gigs Board', active: true },
+        { name: 'Local Internships', active: false },
+        { name: 'Corporate Prep', active: false },
+        { name: 'My Portfolio', active: false }
+      ],
+      feed: [
+        { icon: 'G', title: 'Campus Event Setup (Alumni Dinner)', desc: '$20/hr · 4 hours · <span class="sensitive-data">Apply via Student Portal ID</span>', tag: 'micro-gig' },
+        { icon: 'I', title: 'Part-Time Video Editor for Local Startup', desc: 'Remote/Campus · <span class="sensitive-data">Send portfolio to hr@startup.io</span>', tag: 'internship' },
+        { icon: 'P', title: 'Review my GitHub Portfolio?', desc: 'Prepping for SWE interviews · <span class="sensitive-data">Link: github.com/student-dev</span>', tag: 'review request' }
+      ]
+    }
+  };
+
+  let isAuthenticated = false;
+
+  // Initialization
+  function init() {
+    renderWorkspace('academics');
+  }
+
+  // Switch Tabs Logic
+  function switchWorkspace(workspaceId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.innerText.toLowerCase() === workspaceId) {
+        btn.classList.add('active');
+      }
+    });
+    renderWorkspace(workspaceId);
+  }
+
+  // Active Sidebar Item Logic
+  function setActiveSidebar(clickedElement) {
+    const lis = clickedElement.parentElement.querySelectorAll('li');
+    lis.forEach(li => li.classList.remove('active'));
+    clickedElement.classList.add('active');
+  }
+
+  // Render the Selected Workspace
+  function renderWorkspace(id) {
+    const data = workspaces[id];
+    
+    document.documentElement.style.setProperty('--theme-main', data.themeMain);
+    document.documentElement.style.setProperty('--theme-soft', data.themeSoft);
+
+    document.getElementById('workspace-title').innerText = data.title;
+    document.getElementById('workspace-subtitle').innerText = data.subtitle;
+    document.getElementById('ledger-title').innerText = data.ledgerTitle;
+
+    // Render Sidebar with onclick event attached
+    const sidebarHtml = `
+      <div class="sidebar-section">
+        <h3>Menu</h3>
+        <ul class="sidebar-nav">
+          ${data.sidebar.map(item => `
+            <li class="${item.active ? 'active' : ''}" onclick="setActiveSidebar(this)">${item.name}</li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+    document.getElementById('sidebar').innerHTML = sidebarHtml;
+
+    // Render Ledger Rows with onclick event attached
+    const feedHtml = data.feed.map(item => `
+      <div class="ledger-row" onclick="handleFeedInteraction()">
+        <div class="ledger-icon">${item.icon}</div>
+        <div class="ledger-text">
+          <div class="title">${item.title}</div>
+          <div class="desc">${item.desc}</div>
+        </div>
+        <span class="ledger-tag">${item.tag}</span>
+      </div>
+    `).join('');
+    document.getElementById('ledger-rows').innerHTML = feedHtml;
+  }
+
+  // Interaction check for Feed / Ledger Head
+  function handleFeedInteraction() {
+    if (!isAuthenticated) {
+      openModal();
+    }
+  }
+
+  // Modal Functions
+  function openModal() {
+    const modalTitle = document.getElementById('modal-title');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalForm = document.getElementById('modal-form');
+
+    if(!isAuthenticated) {
+      modalTitle.innerText = "Log in to C.Campus";
+      modalDesc.innerText = "Enter your verified .edu email to unlock full details.";
+      modalForm.style.display = "block";
+    } else {
+      modalTitle.innerText = "Log Out";
+      modalDesc.innerText = "Are you sure you want to log out?";
+      modalForm.innerHTML = `<button class="modal-btn" style="background: var(--ink);" onclick="simulateLogout()">Log Out</button>`;
+    }
+    document.getElementById('loginModal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('loginModal').classList.remove('show');
+  }
+
+  function simulateLogin() {
+    isAuthenticated = true;
+    document.getElementById('app').classList.add('unlocked');
+    closeModal();
+  }
+
+  function simulateLogout() {
+    isAuthenticated = false;
+    document.getElementById('app').classList.remove('unlocked');
+    
+    // Reset modal form HTML for next login
+    document.getElementById('modal-form').innerHTML = `
+      <input type="email" class="modal-input" placeholder="student@college.edu" />
+      <button class="modal-btn" onclick="simulateLogin()">Continue</button>
+    `;
+    
+    closeModal();
+  }
+
+  // Close modal if clicking outside the content
+  document.getElementById('loginModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeModal();
+    }
+  });
+
+  window.onload = init;
+</script>
+</body>
+</html>
