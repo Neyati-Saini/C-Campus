@@ -191,6 +191,23 @@
     overflow-y: auto;
     position: relative;
     background: var(--paper);
+    animation: dashFadeIn 0.5s ease;
+  }
+
+  @keyframes dashFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Brief highlight so a visitor arriving from a specific homepage
+     row/card can see exactly where they landed */
+  @keyframes arrivalPulse {
+    0%   { box-shadow: 0 0 0 0 var(--theme-main); }
+    100% { box-shadow: 0 0 0 8px rgba(0,0,0,0); }
+  }
+
+  .ledger-head.just-arrived {
+    animation: arrivalPulse 1s ease-out;
   }
 
   .content-header {
@@ -379,6 +396,7 @@
       <div class="logo" onclick="openModal()">
         <span class="logo-mark">C.</span>Campus
       </div>
+      <a href="index.html" class="mono" style="font-size:0.72rem;color:var(--ink-soft);margin-left:14px;">← home</a>
     </div>
 
     <div class="os-tabs">
@@ -497,7 +515,25 @@
 
   // Initialization
   function init() {
-    renderWorkspace('academics');
+    // If a visitor arrived from a specific homepage link (e.g. dash.html?tab=workplace),
+    // open straight to that workspace instead of always defaulting to Academics.
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get('tab');
+    const startTab = Object.keys(workspaces).includes(requested) ? requested : 'academics';
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.innerText.toLowerCase() === startTab);
+    });
+
+    renderWorkspace(startTab);
+
+    // Little pulse on the feed header so the jump from the homepage feels
+    // like landing somewhere specific, not a jarring page swap.
+    const ledgerHead = document.querySelector('.ledger-head');
+    if (ledgerHead) {
+      ledgerHead.classList.add('just-arrived');
+      setTimeout(() => ledgerHead.classList.remove('just-arrived'), 1000);
+    }
   }
 
   // Switch Tabs Logic

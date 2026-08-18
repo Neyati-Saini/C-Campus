@@ -276,6 +276,23 @@
 
   .ledger-row:hover{background:var(--paper);}
 
+  .ledger-row{cursor:pointer;}
+
+  .goto-arrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    opacity:0;
+    transform:translateX(-4px);
+    transition:opacity .18s ease, transform .18s ease;
+    margin-left:6px;
+  }
+
+  .ledger-row:hover .goto-arrow{
+    opacity:1;
+    transform:translateX(0);
+  }
+
   .ledger-icon{
     width:38px;height:38px;
     border-radius:8px;
@@ -375,6 +392,29 @@
   .feature-card{
     background:var(--paper-raised);
     padding:32px 28px;
+    display:block;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  }
+
+  .feature-card:hover{
+    transform:translateY(-3px);
+    border-color:var(--line);
+    box-shadow:0 10px 24px rgba(32,36,32,0.06);
+  }
+
+  .feature-card .goto-arrow{
+    display:inline-block;
+    margin-top:14px;
+    opacity:0;
+    transform:translateX(-4px);
+    transition:opacity .18s ease, transform .18s ease;
+  }
+
+  .feature-card:hover .goto-arrow{
+    opacity:1;
+    transform:translateX(0);
   }
 
   .feature-num{
@@ -557,6 +597,7 @@
       <a class="nav-link" href="#features">Features</a>
       <a class="nav-link" href="#how">How it works</a>
       <a class="nav-link" href="#footer">About</a>
+      <a class="nav-link" href="dash.html">Live preview</a>
 
       <!--
         FIX: This block is now controlled by JS at the bottom of the page.
@@ -593,6 +634,8 @@
         <a class="btn btn-primary" href="signup.html" id="heroCta">Create free account</a>
 
         <a class="btn btn-ghost" href="#how">See how it works</a>
+
+        <a class="btn btn-ghost" href="dash.html">Peek inside, no signup →</a>
       </div>
 
       <div class="trust-row">
@@ -614,7 +657,7 @@
         </div>
       </div>
 
-      <div class="ledger-row jobs">
+      <a class="ledger-row jobs" href="dash.html?tab=workplace">
         <div class="ledger-icon">J</div>
 
         <div class="ledger-text">
@@ -622,10 +665,10 @@
           <div class="desc">Posted 2h ago · ₹800 · 3 applicants</div>
         </div>
 
-        <span class="ledger-tag">gig</span>
-      </div>
+        <span class="ledger-tag">gig <span class="goto-arrow">open →</span></span>
+      </a>
 
-      <div class="ledger-row market">
+      <a class="ledger-row market" href="dash.html?tab=marketplace">
         <div class="ledger-icon">M</div>
 
         <div class="ledger-text">
@@ -633,10 +676,10 @@
           <div class="desc">Posted 5h ago · ₹1,200 · pickup only</div>
         </div>
 
-        <span class="ledger-tag">for sale</span>
-      </div>
+        <span class="ledger-tag">for sale <span class="goto-arrow">open →</span></span>
+      </a>
 
-      <div class="ledger-row expenses">
+      <a class="ledger-row expenses" href="dash.html?tab=marketplace">
         <div class="ledger-icon">₹</div>
 
         <div class="ledger-text">
@@ -644,8 +687,8 @@
           <div class="desc">Food ₹3,400 · Books ₹900 · Rent split ₹2,000</div>
         </div>
 
-        <span class="ledger-tag">on track</span>
-      </div>
+        <span class="ledger-tag">on track <span class="goto-arrow">open →</span></span>
+      </a>
 
     </div>
   </div>
@@ -661,32 +704,35 @@
 
     <div class="feature-grid reveal">
 
-      <div class="feature-card">
+      <a class="feature-card" href="dash.html?tab=workplace">
         <div class="feature-num">01 — Jobs</div>
         <h3>Micro-gigs & part-time work</h3>
         <p>
           Post a task or pick one up — tutoring, design work, event help,
           freelance code. Rated by the students who hired you.
         </p>
-      </div>
+        <span class="goto-arrow mono">Open the board →</span>
+      </a>
 
-      <div class="feature-card">
+      <a class="feature-card" href="dash.html?tab=marketplace">
         <div class="feature-num">02 — Marketplace</div>
         <h3>Buy & sell with your campus</h3>
         <p>
           Textbooks, furniture, cycles, electronics. No shipping, no strangers —
           just people who live where you live.
         </p>
-      </div>
+        <span class="goto-arrow mono">Open the board →</span>
+      </a>
 
-      <div class="feature-card">
+      <a class="feature-card" href="dash.html?tab=marketplace">
         <div class="feature-num">03 — Expenses</div>
         <h3>Know where your money goes</h3>
         <p>
           Log spending by category, split rent or trip costs with roommates,
           and get a clear monthly picture — no spreadsheet required.
         </p>
-      </div>
+        <span class="goto-arrow mono">Open the board →</span>
+      </a>
 
     </div>
   </div>
@@ -852,11 +898,11 @@
     // to "Create free account" again
     if (heroCta) {
       heroCta.textContent = 'Go to your dashboard';
-      heroCta.href = '#'; // replace with your real dashboard page when built
+      heroCta.href = 'dash.html';
     }
     if (ctaBlockBtn) {
       ctaBlockBtn.textContent = 'Go to your dashboard';
-      ctaBlockBtn.href = '#';
+      ctaBlockBtn.href = 'dash.html';
     }
   }
 
