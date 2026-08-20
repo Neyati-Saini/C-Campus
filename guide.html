@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Guides</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4; --denim:#35597A; --moss:#2F6F4E; --brick:#B5502F;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:transparent; color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 32px;}
+  
+  .page-head{padding: 36px 0; text-align: center; display: flex; flex-direction: column; align-items: center;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--denim); text-transform:uppercase; letter-spacing:0.08em; display:inline-flex; align-items:center; gap:8px; margin-bottom:16px;}
+  .eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--denim);}
+  h1{font-family:'Fraunces',serif; font-weight:500; font-size:clamp(2rem,3.6vw,2.8rem); margin-bottom:16px; letter-spacing:-0.01em;}
+  .page-sub{color:var(--ink-soft); font-size:1.02rem; max-width:56ch; margin-bottom:28px;}
+
+  .controls{display:flex; gap:12px; justify-content: center; flex-wrap:wrap; margin-bottom: 20px;}
+  select{font-family:'Inter',sans-serif; font-size:0.85rem; padding:10px 14px; border-radius:6px; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink); outline:none;}
+  select:focus{border-color:var(--denim);}
+
+  section.content{padding:12px 0 80px;}
+  .doclist{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-raised);}
+  .doc{display:grid; grid-template-columns:auto 1fr auto auto; gap:16px; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line); transition:background .15s ease;}
+  .doc:last-child{border-bottom:none;}
+  .doc:hover{background:rgba(246,243,236,0.5);}
+  .doc .thumb{width:40px;height:52px;border-radius:5px;flex-shrink:0;background:var(--denim);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;}
+  .doc .info h4{font-family:'Fraunces',serif; font-weight:500; font-size:1.02rem; margin-bottom:3px;}
+  .doc .info .meta{font-size:0.78rem; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+  .vote{display:flex; flex-direction:column; align-items:center; gap:2px; font-family:'IBM Plex Mono',monospace;}
+  .vote button{background:none; border:none; cursor:pointer; font-size:14px; color:var(--ink-soft); line-height:1;}
+  .vote button:hover{color:var(--moss);}
+  .vote .score{font-weight:700; font-size:0.85rem; color:var(--ink);}
+  .fav{background:none; border:none; cursor:pointer; font-size:18px; color:var(--line);}
+  .fav.active{color:var(--brick);}
+  .empty{text-align:center; padding:70px 20px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<section class="page-head wrap">
+  <h1>Study Guides</h1>
+  <p class="page-sub">Notes, past papers, and cheat sheets — crowdsourced. Filter by semester, subject, or professor.</p>
+  <div class="controls">
+    <select id="gSemester"><option value="">Semester — any</option></select>
+    <select id="gSubject"><option value="">Subject — any</option></select>
+    <select id="gProf"><option value="">Professor — any</option></select>
+  </div>
+</section>
+
+<section class="content wrap">
+  <div class="doclist" id="docList"></div>
+</section>
+
+<script>
+const guides = [
+  {title:"CS 301 — Midterm Cheat Sheet", type:"PDF", uploader:"J. Alvarez", date:"Aug 2", sem:"Fall '26", subj:"CS 301", prof:"Dr. Huang", score:34},
+  {title:"BIO 210 — Full Lecture Notes Wk1-6", type:"DOC", uploader:"S. Okafor", date:"Jul 28", sem:"Summer '26", subj:"BIO 210", prof:"Dr. Patel", score:21},
+  {title:"ECON 101 — Past Final (2024)", type:"PDF", uploader:"M. Lund", date:"Jul 15", sem:"Spring '26", subj:"ECON 101", prof:"Dr. Reyes", score:57},
+  {title:"MATH 241 — Proof Techniques Summary", type:"PDF", uploader:"Priya N.", date:"Aug 10", sem:"Fall '26", subj:"MATH 241", prof:"Dr. Huang", score:12},
+  {title:"CS 301 — Recursion Cheat Sheet", type:"DOC", uploader:"Wei C.", date:"Aug 5", sem:"Fall '26", subj:"CS 301", prof:"Dr. Nassar", score:8},
+];
+
+function populateSelect(sel, items){ items.forEach(i=>{ const o=document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o); }); }
+populateSelect(document.getElementById('gSemester'), [...new Set(guides.map(g=>g.sem))]);
+populateSelect(document.getElementById('gSubject'), [...new Set(guides.map(g=>g.subj))]);
+populateSelect(document.getElementById('gProf'), [...new Set(guides.map(g=>g.prof))]);
+
+const favorites = new Set();
+function renderGuides(){
+  const sem = document.getElementById('gSemester').value, subj = document.getElementById('gSubject').value, prof = document.getElementById('gProf').value;
+  const list = document.getElementById('docList'); list.innerHTML='';
+  const filtered = guides.filter(g=>(!sem||g.sem===sem)&&(!subj||g.subj===subj)&&(!prof||g.prof===prof)).sort((a,b)=>b.score-a.score);
+  if(filtered.length===0){ list.innerHTML='<div class="empty">Nothing here yet — be the first to upload.</div>'; return; }
+  filtered.forEach((g,i)=>{
+    const row = document.createElement('div'); row.className='doc';
+    row.innerHTML = `
+      <div class="thumb">${g.type}</div>
+      <div class="info"><h4>${g.title}</h4><div class="meta">${g.subj} · ${g.prof} · ${g.sem} · uploaded by ${g.uploader}, ${g.date}</div></div>
+      <div class="vote"><button data-up="${i}">▲</button><span class="score">${g.score}</span><button data-down="${i}">▼</button></div>
+      <button class="fav ${favorites.has(g.title)?'active':''}" data-fav="${g.title}">★</button>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('[data-up]').forEach(b=>b.addEventListener('click', ()=>{ filtered[+b.dataset.up].score++; renderGuides(); }));
+  list.querySelectorAll('[data-down]').forEach(b=>b.addEventListener('click', ()=>{ filtered[+b.dataset.down].score--; renderGuides(); }));
+  list.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click', ()=>{
+    const t=b.dataset.fav; favorites.has(t) ? favorites.delete(t) : favorites.add(t); renderGuides();
+  }));
+}
+['gSemester','gSubject','gProf'].forEach(id=>document.getElementById(id).addEventListener('change', renderGuides));
+renderGuides();
+</script>
+</body>
+</html>
