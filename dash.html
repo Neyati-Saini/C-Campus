@@ -462,10 +462,10 @@
       subtitle: 'LEARNING, STUDYING & BUILDING',
       ledgerTitle: 'LIVE ACADEMIC FEED',
       sidebar: [
-        { name: 'Skill Swap', active: true },
-        { name: 'Study Guides', active: false },
-        { name: 'Project Matchmaker', active: false },
-        { name: 'My Repositories', active: false }
+        { name: 'Skill Swap', active: true, url: 'skill-swap.html' },
+        { name: 'Study Guides', active: false, url: 'guide.html' },
+        { name: 'Project Matchmaker', active: false, url: 'pro-match.html' },
+        { name: 'My Repositories', active: false, url: 'repo.html' }
       ],
       feed: [
         { icon: 'S', title: 'Trading Intro to C++ tutoring for Graphic Design help', desc: 'Posted 1h ago · <span class="sensitive-data">Contact: sarah.j@college.edu</span>', tag: 'skill swap' },
@@ -480,10 +480,10 @@
       subtitle: 'BUYING, RENTING & MONEY MANAGEMENT',
       ledgerTitle: 'LIVE MARKET FEED',
       sidebar: [
-        { name: 'Dorm Essentials', active: true },
-        { name: 'Hardware Rentals', active: false },
-        { name: 'Group Split (AI)', active: false },
-        { name: 'My Listings', active: false }
+        { name: 'Dorm Essentials', active: true, url: 'dorm.html' },
+        { name: 'Hardware Rentals', active: false, url: 'rentals.html' },
+        { name: 'Group Split (AI)', active: false, url: 'gsplit.html' },
+        { name: 'My Listings', active: false , url: 'listings.html'}
       ],
       feed: [
         { icon: 'M', title: 'Mini-Fridge (Used 1 Semester)', desc: '$45 · <span class="sensitive-data">Pickup: North Dorms, Floor 2</span>', tag: 'for sale' },
@@ -498,10 +498,10 @@
       subtitle: 'EARNING, FREELANCING & CAREERS',
       ledgerTitle: 'LOCAL MICRO-GIGS & INTERNSHIPS',
       sidebar: [
-        { name: 'Micro-Gigs Board', active: true },
-        { name: 'Local Internships', active: false },
-        { name: 'Corporate Prep', active: false },
-        { name: 'My Portfolio', active: false }
+        { name: 'Micro-Gigs Board', active: true, url: 'gigs.html' },
+        { name: 'Local Internships', active: false ,url: 'internships.html'},
+        { name: 'Corporate Prep', active: false, url: 'corporate.html' },
+        { name: 'My Portfolio', active: false , url: 'portfolio.html'}
       ],
       feed: [
         { icon: 'G', title: 'Campus Event Setup (Alumni Dinner)', desc: '$20/hr · 4 hours · <span class="sensitive-data">Apply via Student Portal ID</span>', tag: 'micro-gig' },
@@ -554,16 +554,56 @@
     clickedElement.classList.add('active');
   }
 
+  // Load feature into iframe
+  function loadFeature(clickedElement, url) {
+    setActiveSidebar(clickedElement);
+    
+    const mainContent = document.querySelector('.main-content');
+    
+    if (url) {
+      // If a URL is attached to the sidebar item, load the iframe
+      mainContent.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>`;
+      // Optional: remove padding on main-content so the iframe fits edge-to-edge
+      mainContent.style.padding = '0';
+    } else {
+      // If there is no URL (e.g. for features you haven't built yet), re-render the workspace default view
+      const currentWorkspaceId = document.querySelector('.tab-btn.active').innerText.toLowerCase();
+      // Restore padding just in case it was removed by an iframe
+      mainContent.style.padding = '40px'; 
+      // Repopulate with the default ledger HTML structure from your renderWorkspace function
+      const data = workspaces[currentWorkspaceId];
+      mainContent.innerHTML = `
+        <div class="content-header">
+          <h1 id="workspace-title">${data.title}</h1>
+          <p class="mono" id="workspace-subtitle" style="color: var(--ink-soft); margin-top: 8px;">${data.subtitle}</p>
+        </div>
+        <div class="ledger">
+          <div class="ledger-head" onclick="handleFeedInteraction()">
+            <span class="mono" id="ledger-title">${data.ledgerTitle}</span>
+            <span class="mono">VERIFIED STUDENTS ONLY</span>
+          </div>
+          <div id="ledger-rows">
+            ${data.feed.map(item => `
+              <div class="ledger-row" onclick="handleFeedInteraction()">
+                <div class="ledger-icon">${item.icon}</div>
+                <div class="ledger-text">
+                  <div class="title">${item.title}</div>
+                  <div class="desc">${item.desc}</div>
+                </div>
+                <span class="ledger-tag">${item.tag}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
   // Render the Selected Workspace
   function renderWorkspace(id) {
     const data = workspaces[id];
-    
+
     document.documentElement.style.setProperty('--theme-main', data.themeMain);
     document.documentElement.style.setProperty('--theme-soft', data.themeSoft);
-
-    document.getElementById('workspace-title').innerText = data.title;
-    document.getElementById('workspace-subtitle').innerText = data.subtitle;
-    document.getElementById('ledger-title').innerText = data.ledgerTitle;
 
     // Render Sidebar with onclick event attached
     const sidebarHtml = `
@@ -571,25 +611,57 @@
         <h3>Menu</h3>
         <ul class="sidebar-nav">
           ${data.sidebar.map(item => `
-            <li class="${item.active ? 'active' : ''}" onclick="setActiveSidebar(this)">${item.name}</li>
+            <li class="${item.active ? 'active' : ''}" onclick="loadFeature(this, '${item.url || ''}')">${item.name}</li>
           `).join('')}
         </ul>
       </div>
     `;
     document.getElementById('sidebar').innerHTML = sidebarHtml;
 
-    // Render Ledger Rows with onclick event attached
-    const feedHtml = data.feed.map(item => `
-      <div class="ledger-row" onclick="handleFeedInteraction()">
-        <div class="ledger-icon">${item.icon}</div>
-        <div class="ledger-text">
-          <div class="title">${item.title}</div>
-          <div class="desc">${item.desc}</div>
-        </div>
-        <span class="ledger-tag">${item.tag}</span>
+    // Rebuild main-content from scratch every time a top-level tab is
+    // clicked. A previous visit to a module page replaces #main-content
+    // with an <iframe>, which removes the #workspace-title / #ledger-rows
+    // elements this function used to reach into directly -- doing that
+    // caused every tab switch after the first module visit to silently
+    // fail. Rebuilding the markup here first keeps it reliable.
+    const mainContent = document.querySelector('.main-content');
+    mainContent.style.padding = '40px';
+    mainContent.innerHTML = `
+      <div class="content-header">
+        <h1 id="workspace-title">${data.title}</h1>
+        <p class="mono" id="workspace-subtitle" style="color: var(--ink-soft); margin-top: 8px;">${data.subtitle}</p>
       </div>
-    `).join('');
-    document.getElementById('ledger-rows').innerHTML = feedHtml;
+      <div class="ledger">
+        <div class="ledger-head" onclick="handleFeedInteraction()">
+          <span class="mono" id="ledger-title">${data.ledgerTitle}</span>
+          <span class="mono">VERIFIED STUDENTS ONLY</span>
+        </div>
+        <div id="ledger-rows">
+          ${data.feed.map(item => `
+            <div class="ledger-row" onclick="handleFeedInteraction()">
+              <div class="ledger-icon">${item.icon}</div>
+              <div class="ledger-text">
+                <div class="title">${item.title}</div>
+                <div class="desc">${item.desc}</div>
+              </div>
+              <span class="ledger-tag">${item.tag}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Jump straight into this workspace's first module page (the sidebar
+    // item marked active, falling back to the first item) instead of
+    // stopping on the ledger view -- so clicking Academics / Marketplace /
+    // Workplace in the top nav takes you to that workspace's own default
+    // page rather than a generic landing view.
+    const defaultItem = data.sidebar.find(item => item.active) || data.sidebar[0];
+    if (defaultItem && defaultItem.url) {
+      const targetLi = [...document.querySelectorAll('#sidebar .sidebar-nav li')]
+        .find(li => li.textContent.trim() === defaultItem.name);
+      if (targetLi) loadFeature(targetLi, defaultItem.url);
+    }
   }
 
   // Interaction check for Feed / Ledger Head

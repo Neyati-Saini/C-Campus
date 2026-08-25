@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorm Essentials · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --theme-main:var(--brick); --theme-soft:var(--brick-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--brick-soft);color:var(--brick);}
+
+  /* ---------- Top strip ---------- */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 28px;height:56px;
+    background:rgba(246,243,236,0.95);border-bottom:1px solid var(--line);
+    backdrop-filter:blur(10px);position:sticky;top:0;z-index:50;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .logo{display:flex;align-items:center;gap:9px;font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;color:var(--ink-soft);}
+  .logo-mark{width:24px;height:24px;border-radius:6px;background:var(--ink-soft);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;transform:rotate(-3deg);}
+  .crumb{font-size:0.72rem;color:var(--ink-soft);}
+  .crumb b{color:var(--theme-main);font-weight:600;}
+  .back-link{font-size:0.72rem;color:var(--ink-soft);padding:6px 12px;border-radius:20px;border:1px solid var(--line);transition:all .2s ease;}
+  .back-link:hover{border-color:var(--theme-main);color:var(--theme-main);}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:56px 28px 28px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:520px;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    max-width:1180px;margin:26px auto 0;padding:0 28px;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  }
+  .search-wrap{
+    flex:1;min-width:220px;display:flex;align-items:center;gap:8px;
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;transition:border-color .2s ease;
+  }
+  .search-wrap:focus-within{border-color:var(--theme-main);}
+  .search-wrap svg{flex-shrink:0;opacity:0.5;}
+  .search-wrap input{border:none;outline:none;background:none;font-family:'Inter',sans-serif;font-size:0.9rem;width:100%;color:var(--ink);}
+  select.sort{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .chips{display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:16px auto 0;padding:0 28px;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:0.74rem;padding:7px 14px;border-radius:20px;
+    border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;background:var(--paper-raised);
+    transition:all .18s ease;
+  }
+  .chip:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .chip.active{background:var(--theme-main);color:var(--paper);border-color:var(--theme-main);}
+
+  .count-row{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;justify-content:space-between;align-items:center;}
+  .count-row span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+
+  /* ---------- Grid ---------- */
+  .grid{
+    max-width:1180px;margin:16px auto 80px;padding:0 28px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:20px;
+  }
+  .card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    display:flex;flex-direction:column;
+    opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;
+    transition:transform .25s ease,box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -14px rgba(32,36,32,0.18);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .thumb{
+    height:150px;background:var(--brick-soft);display:flex;align-items:center;justify-content:center;
+    position:relative;
+  }
+  .thumb svg{width:56px;height:56px;color:var(--brick);transition:transform .3s ease;}
+  .card:hover .thumb svg{transform:rotate(-6deg) scale(1.08);}
+  .cond{
+    position:absolute;top:10px;left:10px;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+    padding:4px 9px;border-radius:20px;font-weight:500;letter-spacing:0.02em;
+  }
+  .cond.new{background:var(--moss);color:#fff;}
+  .cond.likenew{background:var(--denim);color:#fff;}
+  .cond.used{background:var(--brick);color:#fff;}
+
+  .body{padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+  .card-title{font-family:'Fraunces',serif;font-size:1.06rem;font-weight:500;line-height:1.25;}
+  .price{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--theme-main);}
+  .loc{display:flex;align-items:center;gap:6px;font-size:0.74rem;color:var(--ink-soft);}
+  .loc svg{width:12px;height:12px;flex-shrink:0;}
+  .posted{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--ink-soft);opacity:0.75;}
+
+  .actions{display:flex;gap:8px;padding:0 16px 16px;}
+  .btn{
+    flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;
+    transition:opacity .2s ease,transform .15s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--theme-main);color:#fff;}
+  .btn-primary:hover{opacity:0.88;}
+  .btn-icon{
+    width:40px;flex:none;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;color:var(--ink-soft);
+  }
+  .btn-icon:hover{border-color:var(--theme-main);color:var(--theme-main);}
+
+  .empty{max-width:1180px;margin:60px auto;padding:0 28px;text-align:center;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+  .hidden{display:none !important;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(32,36,32,0.45);display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:200;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal{
+    background:var(--paper-raised);border-radius:16px;padding:28px;width:360px;max-width:90vw;
+    transform:translateY(16px) scale(0.97);transition:transform .22s ease;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.3);
+  }
+  .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+  .modal h2{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:4px;}
+  .modal .item-name{font-size:0.85rem;color:var(--ink-soft);margin-bottom:18px;}
+  .modal label{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--ink-soft);display:block;margin-bottom:6px;text-transform:uppercase;}
+  .modal input, .modal textarea{
+    width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-family:'Inter',sans-serif;font-size:0.88rem;margin-bottom:16px;outline:none;background:var(--paper);
+    transition:border-color .2s ease;
+  }
+  .modal input:focus, .modal textarea:focus{border-color:var(--theme-main);}
+  .modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);cursor:pointer;}
+  .modal{position:relative;}
+  .toast{
+    position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;
+    transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .topbar{padding:0 16px;} .hero,.toolbar,.chips,.count-row,.grid{padding-left:16px;padding-right:16px;}}
+</style>
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="eyebrow">Buy · Sell · Move on</div>
+  <h1>Dorm Essentials</h1>
+  <p class="sub">A localized board for hostel students moving in or out — kettles, mattresses, textbooks, and everything in between, sold by people down the hall.</p>
+</section>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search kettles, mattresses, textbooks…">
+  </div>
+  <select class="sort mono" id="sortSelect">
+    <option value="recent">Sort: Most recent</option>
+    <option value="low">Sort: Price, low to high</option>
+    <option value="high">Sort: Price, high to low</option>
+  </select>
+</div>
+
+<div class="chips" id="chips"></div>
+
+<div class="count-row">
+  <span id="countLabel" class="mono">— items near you</span>
+  <span class="mono">BLOCK A–D · CAMPUS ONLY</span>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty hidden" id="emptyState">
+  <h3>Nothing matches yet</h3>
+  <p>Try a different search term or clear your filters.</p>
+</div>
+
+<!-- Offer Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Make an offer</h2>
+    <p class="item-name" id="modalItemName">Item name</p>
+    <label>Your offer</label>
+    <input type="text" id="offerAmount" placeholder="₹ e.g. 800">
+    <label>Message (optional)</label>
+    <textarea rows="3" id="offerMsg" placeholder="Can I pick it up this weekend?"></textarea>
+    <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="submitOffer()">Send offer</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Offer sent</span></div>
+
+<script>
+const ICONS = {
+  kettle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12h11a3 3 0 0 1 3 3v1a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-4z"/><path d="M4 12V8a2 2 0 0 1 2-2h2"/><path d="M18 10l4-3"/><path d="M9 6V3"/></svg>',
+  mattress:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M3 12h18"/><path d="M3 8l3-3h12l3 3"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>',
+  lamp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 2h6l3 7H6l3-7z"/><path d="M12 9v9"/><path d="M8 22h8"/><path d="M9 22c0-2 1-4 3-4s3 2 3 4"/></svg>',
+  chair:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4"/><path d="M6 20v-3M18 20v-3"/><path d="M6 13h12"/></svg>',
+  fridge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 14v3"/></svg>',
+  fan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2"/><path d="M12 10c0-3 2-6 5-6s2 4-1 6"/><path d="M12 14c0 3-2 6-5 6s-2-4 1-6"/><path d="M10 12c-3 0-6-2-6-5s4-2 6 1"/><path d="M14 12c3 0 6 2 6 5s-4 2-6-1"/></svg>',
+  cycle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="17" r="3.2"/><circle cx="18" cy="17" r="3.2"/><path d="M6 17l4-9h5l3 9"/><path d="M10 8H8"/><path d="M9.5 17H15l-2-6"/></svg>'
+};
+
+const ITEMS = [
+  {id:1,title:'Electric Kettle, 1.5L',icon:'kettle',cond:'likenew',price:499,loc:'Block A · Room 204',time:'2h ago',cat:'kitchen'},
+  {id:2,title:'Single Foam Mattress',icon:'mattress',cond:'used',price:1200,loc:'Block C · Room 112',time:'5h ago',cat:'furniture'},
+  {id:3,title:'Data Structures Textbook (3rd Ed)',icon:'book',cond:'likenew',price:350,loc:'Block B · Room 309',time:'1d ago',cat:'books'},
+  {id:4,title:'Study Table Lamp',icon:'lamp',cond:'new',price:280,loc:'Block A · Room 118',time:'3h ago',cat:'decor'},
+  {id:5,title:'Study Chair, Foldable',icon:'chair',cond:'used',price:600,loc:'Block D · Room 401',time:'6h ago',cat:'furniture'},
+  {id:6,title:'Mini Fridge, 1 Semester Used',icon:'fridge',cond:'likenew',price:3200,loc:'Block A · Room 204',time:'1d ago',cat:'electronics'},
+  {id:7,title:'Table Fan, High Speed',icon:'fan',cond:'used',price:450,loc:'Block C · Room 220',time:'2d ago',cat:'electronics'},
+  {id:8,title:'Probability & Stochastic Processes Notes Set',icon:'book',cond:'new',price:150,loc:'Block B · Room 118',time:'4h ago',cat:'books'},
+  {id:9,title:'Used Bicycle, Campus Commute',icon:'cycle',cond:'used',price:2800,loc:'Block D · Room 315',time:'2d ago',cat:'other'},
+  {id:10,title:'Bedside Lamp, Warm Light',icon:'lamp',cond:'new',price:320,loc:'Block A · Room 227',time:'9h ago',cat:'decor'}
+];
+
+const CONDLABEL={new:'New',likenew:'Like New',used:'Heavily Used'};
+const CATS=['all','kitchen','furniture','books','electronics','decor','other'];
+let activeCat='all';
+
+function renderChips(){
+  document.getElementById('chips').innerHTML = CATS.map(c=>
+    `<button class="chip ${c===activeCat?'active':''}" data-cat="${c}">${c[0].toUpperCase()+c.slice(1)}</button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{activeCat=b.dataset.cat;renderChips();render();}));
+}
+
+function render(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const sort = document.getElementById('sortSelect').value;
+  let list = ITEMS.filter(i => (activeCat==='all'||i.cat===activeCat) && i.title.toLowerCase().includes(q));
+  if(sort==='low') list = [...list].sort((a,b)=>a.price-b.price);
+  if(sort==='high') list = [...list].sort((a,b)=>b.price-a.price);
+
+  document.getElementById('countLabel').textContent = `${list.length} item${list.length!==1?'s':''} near you`;
+  const grid = document.getElementById('grid');
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+
+  grid.innerHTML = list.map((i,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.04}s">
+      <div class="thumb">
+        <span class="cond ${i.cond}">${CONDLABEL[i.cond]}</span>
+        ${ICONS[i.icon]}
+      </div>
+      <div class="body">
+        <div class="card-title">${i.title}</div>
+        <div class="price">₹${i.price.toLocaleString('en-IN')}</div>
+        <div class="loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${i.loc}</div>
+        <div class="posted">POSTED ${i.time.toUpperCase()}</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" onclick="openModal(${i.id})">Make an Offer</button>
+        <button class="btn-icon" title="Chat with seller"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.4 8.4 0 0 1-3.6-.8L3 21l1.9-6a8.4 8.4 0 1 1 16.1-3.5z"/></svg></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+let currentItem=null;
+function openModal(id){
+  currentItem = ITEMS.find(i=>i.id===id);
+  document.getElementById('modalItemName').textContent = currentItem.title + ' · ₹' + currentItem.price.toLocaleString('en-IN');
+  document.getElementById('offerAmount').value='';
+  document.getElementById('offerMsg').value='';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function submitOffer(){
+  if(!currentItem) return;
+  const amt = document.getElementById('offerAmount').value;
+  closeModal();
+  showToast(amt ? `Offer of ₹${amt} sent for ${currentItem.title}` : `Offer sent for ${currentItem.title}`);
+}
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal();});
+document.getElementById('searchInput').addEventListener('input',render);
+document.getElementById('sortSelect').addEventListener('change',render);
+
+renderChips();
+render();
+</script>
+</body>
+</html>
