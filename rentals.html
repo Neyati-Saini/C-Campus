@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hardware Rentals · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --theme-main:var(--brick); --theme-soft:var(--brick-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--brick-soft);color:var(--brick);}
+
+  .hero{padding:56px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
+
+  .strip{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;padding:7px 14px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;background:var(--paper-raised);transition:all .18s ease;}
+  .chip:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .chip.active{background:var(--theme-main);color:var(--paper);border-color:var(--theme-main);}
+
+  .grid{max-width:1180px;margin:26px auto 90px;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:16px;overflow:hidden;opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;transition:box-shadow .25s ease;}
+  .card:hover{box-shadow:0 16px 34px -16px rgba(32,36,32,0.2);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .chead{padding:18px 18px 0;display:flex;gap:14px;align-items:flex-start;}
+  .icon-box{width:52px;height:52px;border-radius:12px;background:var(--brick-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;transform:rotate(-3deg);}
+  .icon-box svg{width:26px;height:26px;color:var(--brick);}
+  .chead-title{font-family:'Fraunces',serif;font-size:1.12rem;font-weight:500;}
+  .chead-sub{font-size:0.76rem;color:var(--ink-soft);margin-top:3px;}
+  .rates{display:flex;gap:10px;margin-top:4px;}
+  .rate-pill{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;background:var(--paper);border:1px solid var(--line);padding:5px 9px;border-radius:8px;color:var(--ink-soft);}
+  .rate-pill b{color:var(--ink);}
+
+  .deposit-row{display:flex;justify-content:space-between;align-items:center;margin:14px 18px 0;padding:10px 12px;background:var(--denim-soft);border-radius:10px;}
+  .deposit-row span{font-size:0.75rem;color:var(--denim);}
+  .deposit-row b{font-family:'Fraunces',serif;color:var(--denim);font-size:1rem;}
+
+  /* Calendar */
+  .cal{margin:16px 18px 0;border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .cal-head span{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ink-soft);text-transform:uppercase;}
+  .cal-nav{display:flex;gap:4px;}
+  .cal-nav button{width:22px;height:22px;border:1px solid var(--line);background:var(--paper);border-radius:6px;cursor:pointer;color:var(--ink-soft);font-size:0.7rem;display:flex;align-items:center;justify-content:center;}
+  .cal-nav button:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .cal-dow{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--ink-soft);text-align:center;opacity:0.6;padding-bottom:2px;}
+  .cal-day{
+    aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;
+    font-size:0.72rem;cursor:pointer;font-family:'Inter',sans-serif;color:var(--ink);
+    transition:all .15s ease;position:relative;
+  }
+  .cal-day.blank{cursor:default;}
+  .cal-day.free:hover{background:var(--brick-soft);color:var(--brick);}
+  .cal-day.booked{background:var(--line);color:var(--ink-soft);opacity:0.55;cursor:not-allowed;text-decoration:line-through;}
+  .cal-day.selected{background:var(--theme-main);color:#fff;font-weight:600;}
+  .cal-legend{display:flex;gap:14px;margin-top:10px;}
+  .cal-legend span{font-size:0.66rem;color:var(--ink-soft);display:flex;align-items:center;gap:5px;}
+  .leg-dot{width:8px;height:8px;border-radius:2px;display:inline-block;}
+  .leg-dot.free{background:var(--brick-soft);border:1px solid var(--brick);}
+  .leg-dot.booked{background:var(--line);}
+  .leg-dot.selected{background:var(--theme-main);}
+
+  .terms{display:flex;align-items:flex-start;gap:9px;margin:16px 18px 0;font-size:0.76rem;color:var(--ink-soft);cursor:pointer;}
+  .terms input{margin-top:2px;accent-color:var(--theme-main);cursor:pointer;}
+
+  .cfoot{padding:16px 18px 20px;}
+  .btn{width:100%;padding:12px;border-radius:9px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:0.86rem;transition:all .2s ease;}
+  .btn-primary{background:var(--theme-main);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:0.88;}
+  .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:not-allowed;}
+  .sel-note{font-family:'IBM Plex Mono',monospace;font-size:0.66rem;color:var(--ink-soft);margin-top:8px;text-align:center;min-height:14px;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .hero,.strip,.grid{padding-left:16px;padding-right:16px;}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="eyebrow">Borrow · Return · Repeat</div>
+  <h1>Hardware Rentals</h1>
+  <p class="sub">Rent the microcontrollers, sensors, cameras and machines you only need once a semester — pick a date, check the deposit, and lock it in.</p>
+</section>
+
+<div class="strip" id="chips"></div>
+
+<div class="grid" id="grid"></div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Rental requested</span></div>
+
+<script>
+const ICONS = {
+  mcu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>',
+  cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  vac:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V9a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v3"/><rect x="14" y="12" width="7" height="5" rx="1"/><path d="M4 21h9"/><circle cx="8" cy="21" r="1.4"/></svg>',
+  sensor:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M4.9 4.9a10 10 0 0 1 14.2 0M19.1 19.1a10 10 0 0 1-14.2 0M7.8 7.8a5.4 5.4 0 0 1 8.4 0M16.2 16.2a5.4 5.4 0 0 1-8.4 0"/></svg>',
+  drone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M6.5 6.5L10 10M17.5 6.5L14 10M6.5 17.5L10 14M17.5 17.5L14 14"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>',
+  proj:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="7" width="15" height="10" rx="2"/><circle cx="9.5" cy="12" r="2.6"/><path d="M17 11l5-3v8l-5-3"/></svg>'
+};
+
+const ITEMS = [
+  {id:1,name:'Arduino Uno + Sensor Kit',icon:'mcu',sub:'Full starter kit, breadboard included',daily:60,weekly:320,deposit:500,cat:'electronics',booked:[3,4,5,14,15]},
+  {id:2,name:'DSLR Camera, Canon 200D',icon:'cam',sub:'With 18-55mm kit lens + SD card',daily:250,weekly:1400,deposit:3000,cat:'photo',booked:[6,7,8,9,20,21]},
+  {id:3,name:'Heavy-Duty Carpet Cleaner',icon:'vac',sub:'Wet/dry extraction, move-out ready',daily:150,weekly:800,deposit:1000,cat:'cleaning',booked:[10,11,25]},
+  {id:4,name:'Raspberry Pi 4 Bundle',icon:'mcu',sub:'8GB RAM, case, power supply',daily:70,weekly:380,deposit:600,cat:'electronics',booked:[2,16,17,18]},
+  {id:5,name:'Mini Drone, Camera Mount',icon:'drone',sub:'For rooftop shoots and demos',daily:300,weekly:1600,deposit:4000,cat:'photo',booked:[12,13,22,23,24]},
+  {id:6,name:'Portable Mini Projector',icon:'proj',sub:'HDMI + Bluetooth audio out',daily:120,weekly:650,deposit:1500,cat:'photo',booked:[5,19]}
+];
+
+let activeCat='all';
+const CATS=['all','electronics','photo','cleaning'];
+function renderChips(){
+  document.getElementById('chips').innerHTML = CATS.map(c=>`<button class="chip ${c===activeCat?'active':''}" data-cat="${c}">${c[0].toUpperCase()+c.slice(1)}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{activeCat=b.dataset.cat;renderChips();renderGrid();}));
+}
+
+// selection state per item: {monthOffset, selectedDay}
+const state = {};
+ITEMS.forEach(i=>state[i.id]={monthOffset:0, day:null, agreed:false});
+
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function buildCalendar(item){
+  const s = state[item.id];
+  const base = new Date(2026,7,1); // Aug 2026 reference
+  const view = new Date(base.getFullYear(), base.getMonth()+s.monthOffset, 1);
+  const y=view.getFullYear(), m=view.getMonth();
+  const firstDow = new Date(y,m,1).getDay();
+  const daysInMonth = new Date(y,m+1,0).getDate();
+
+  let cells='';
+  for(let i=0;i<firstDow;i++) cells+='<div class="cal-day blank"></div>';
+  for(let d=1; d<=daysInMonth; d++){
+    const isBooked = s.monthOffset===0 && item.booked.includes(d);
+    const isSelected = s.monthOffset===0 && s.day===d;
+    let cls='cal-day '+(isBooked?'booked':'free')+(isSelected?' selected':'');
+    cells+=`<div class="${cls}" data-day="${d}" data-item="${item.id}">${d}</div>`;
+  }
+  const dow=['S','M','T','W','T','F','S'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  return `
+    <div class="cal-head">
+      <span>${MONTHS[m]} ${y}</span>
+      <div class="cal-nav">
+        <button data-nav="-1" data-item="${item.id}">‹</button>
+        <button data-nav="1" data-item="${item.id}">›</button>
+      </div>
+    </div>
+    <div class="cal-grid">${dow}${cells}</div>
+    <div class="cal-legend">
+      <span><i class="leg-dot free"></i>Free</span>
+      <span><i class="leg-dot booked"></i>Booked</span>
+      <span><i class="leg-dot selected"></i>Selected</span>
+    </div>
+  `;
+}
+
+function renderGrid(){
+  const list = ITEMS.filter(i=>activeCat==='all'||i.cat===activeCat);
+  document.getElementById('grid').innerHTML = list.map((i,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <div class="chead">
+        <div class="icon-box">${ICONS[i.icon]}</div>
+        <div>
+          <div class="chead-title">${i.name}</div>
+          <div class="chead-sub">${i.sub}</div>
+          <div class="rates">
+            <span class="rate-pill mono"><b>₹${i.daily}</b>/day</span>
+            <span class="rate-pill mono"><b>₹${i.weekly}</b>/week</span>
+          </div>
+        </div>
+      </div>
+      <div class="deposit-row"><span>Security deposit</span><b>₹${i.deposit.toLocaleString('en-IN')}</b></div>
+      <div class="cal" id="cal-${i.id}">${buildCalendar(i)}</div>
+      <label class="terms">
+        <input type="checkbox" id="terms-${i.id}" data-item="${i.id}">
+        I agree to the damage liability terms and will return the item in its original condition.
+      </label>
+      <div class="cfoot">
+        <button class="btn btn-primary" id="req-${i.id}" data-item="${i.id}" disabled>Request Rental</button>
+        <div class="sel-note" id="note-${i.id}">Pick a free date on the calendar</div>
+      </div>
+    </div>
+  `).join('');
+  attachHandlers();
+}
+
+function attachHandlers(){
+  document.querySelectorAll('.cal-day.free').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.item, day = parseInt(el.dataset.day);
+      state[id].day = day;
+      refreshCal(id);
+      updateRequestState(id);
+    });
+  });
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.item;
+      state[id].monthOffset += parseInt(el.dataset.nav);
+      state[id].day = null;
+      refreshCal(id);
+      updateRequestState(id);
+    });
+  });
+  document.querySelectorAll('.terms input').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      state[el.dataset.item].agreed = el.checked;
+      updateRequestState(el.dataset.item);
+    });
+  });
+  document.querySelectorAll('[id^="req-"]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.item;
+      const item = ITEMS.find(i=>i.id==id);
+      const day = state[id].day;
+      closeAndToast(`Rental requested: ${item.name} for Aug ${day}`);
+    });
+  });
+}
+
+function refreshCal(id){
+  const item = ITEMS.find(i=>i.id==id);
+  document.getElementById('cal-'+id).innerHTML = buildCalendar(item);
+  attachHandlers();
+}
+
+function updateRequestState(id){
+  const s = state[id];
+  const btn = document.getElementById('req-'+id);
+  const note = document.getElementById('note-'+id);
+  const ready = s.day && s.agreed;
+  btn.disabled = !ready;
+  if(!s.day) note.textContent = 'Pick a free date on the calendar';
+  else if(!s.agreed) note.textContent = `Date selected: Aug ${s.day} — agree to terms to continue`;
+  else note.textContent = `Ready to request for Aug ${s.day}`;
+}
+
+function closeAndToast(text){ showToast(text); }
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+renderChips();
+renderGrid();
+</script>
+</body>
+</html>

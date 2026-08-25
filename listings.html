@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Listings · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --theme-main:var(--brick); --theme-soft:var(--brick-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--brick-soft);color:var(--brick);}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;background:rgba(246,243,236,0.95);border-bottom:1px solid var(--line);backdrop-filter:blur(10px);position:sticky;top:0;z-index:50;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .logo{display:flex;align-items:center;gap:9px;font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;color:var(--ink-soft);}
+  .logo-mark{width:24px;height:24px;border-radius:6px;background:var(--ink-soft);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;transform:rotate(-3deg);}
+  .crumb{font-size:0.72rem;color:var(--ink-soft);}
+  .crumb b{color:var(--theme-main);font-weight:600;}
+  .back-link{font-size:0.72rem;color:var(--ink-soft);padding:6px 12px;border-radius:20px;border:1px solid var(--line);transition:all .2s ease;}
+  .back-link:hover{border-color:var(--theme-main);color:var(--theme-main);}
+
+  .hero{padding:56px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
+
+  /* Earnings tracker */
+  .earnings{
+    max-width:1180px;margin:28px auto 0;padding:0 28px;
+    display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;
+  }
+  @media (max-width:760px){.earnings{grid-template-columns:1fr;}}
+  .e-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:20px;}
+  .e-card.main{background:var(--ink);color:var(--paper);position:relative;overflow:hidden;}
+  .e-card.main::after{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:var(--brick);opacity:0.18;}
+  .e-label{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;opacity:0.7;}
+  .e-amt{font-family:'Fraunces',serif;font-size:2.1rem;font-weight:600;margin-top:8px;position:relative;}
+  .e-amt.small{font-size:1.6rem;}
+  .e-sub{font-size:0.76rem;margin-top:6px;opacity:0.75;}
+  .e-trend{display:inline-flex;align-items:center;gap:4px;color:var(--moss);font-size:0.74rem;margin-top:8px;font-weight:600;}
+  .e-card.main .e-trend{color:#8FD9A8;}
+
+  /* Tabs */
+  .tabs{max-width:1180px;margin:30px auto 0;padding:0 28px;display:flex;gap:6px;border-bottom:1px solid var(--line);}
+  .tab{
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;padding:12px 6px;margin-right:22px;
+    color:var(--ink-soft);cursor:pointer;position:relative;background:none;border:none;
+    display:flex;align-items:center;gap:7px;
+  }
+  .tab .badge{background:var(--line);color:var(--ink-soft);font-size:0.62rem;padding:2px 7px;border-radius:10px;}
+  .tab.active{color:var(--theme-main);}
+  .tab.active .badge{background:var(--theme-main);color:#fff;}
+  .tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--theme-main);}
+
+  .list{max-width:1180px;margin:22px auto 90px;padding:0 28px;display:flex;flex-direction:column;gap:12px;}
+  .row{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:16px 18px;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    opacity:0;transform:translateY(10px);animation:rise .4s ease forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .row-icon{width:46px;height:46px;border-radius:11px;background:var(--brick-soft);color:var(--brick);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .row-icon svg{width:22px;height:22px;}
+  .row-main{flex:1;min-width:180px;}
+  .row-title{font-family:'Fraunces',serif;font-size:1.02rem;font-weight:500;}
+  .row-meta{font-size:0.75rem;color:var(--ink-soft);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;}
+  .status-pill{font-family:'IBM Plex Mono',monospace;font-size:0.64rem;padding:4px 10px;border-radius:20px;font-weight:500;white-space:nowrap;}
+  .status-pill.active{background:var(--moss-soft);color:var(--moss);}
+  .status-pill.pending{background:var(--denim-soft);color:var(--denim);}
+  .status-pill.completed{background:var(--line);color:var(--ink-soft);}
+  .row-price{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;color:var(--theme-main);white-space:nowrap;}
+
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .mbtn{
+    font-family:'Inter',sans-serif;font-size:0.76rem;font-weight:600;padding:8px 12px;border-radius:8px;
+    border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);
+    transition:all .18s ease;display:flex;align-items:center;gap:5px;
+  }
+  .mbtn:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .mbtn.sold:hover{border-color:var(--moss);color:var(--moss);}
+  .mbtn.del:hover{border-color:#C0392B;color:#C0392B;}
+  .mbtn svg{width:13px;height:13px;}
+
+  .price-edit{display:none;align-items:center;gap:6px;}
+  .price-edit.show{display:flex;}
+  .price-edit input{width:80px;padding:6px 8px;border:1px solid var(--theme-main);border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;}
+  .price-edit button{background:var(--theme-main);color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:0.72rem;cursor:pointer;font-weight:600;}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .topbar,.hero,.earnings,.tabs,.list{padding-left:16px;padding-right:16px;} .row{padding:14px;} .row-price{order:1;} .row-actions{width:100%;order:2;}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="eyebrow">Your command center</div>
+  <h1>My Listings</h1>
+  <p class="sub">Everything you're selling, renting out, or splitting — in one place, with earnings tracked as they land.</p>
+</section>
+
+<div class="earnings">
+  <div class="e-card main">
+    <div class="e-label">Total earned on C.Campus</div>
+    <div class="e-amt" id="totalEarned">₹0</div>
+    <div class="e-trend">↑ 12% vs last month</div>
+  </div>
+  <div class="e-card">
+    <div class="e-label">Active listings</div>
+    <div class="e-amt small" id="activeCount">0</div>
+    <div class="e-sub">Currently visible to buyers</div>
+  </div>
+  <div class="e-card">
+    <div class="e-label">Pending offers</div>
+    <div class="e-amt small" id="pendingCount">0</div>
+    <div class="e-sub">In talks with a buyer</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<div class="list" id="list"></div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Updated</span></div>
+
+<script>
+const ICONS = {
+  fridge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14"/><path d="M8 5v3M8 14v3"/></svg>',
+  cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5v-17z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>',
+  vac:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V9a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v3"/><rect x="14" y="12" width="7" height="5" rx="1"/><path d="M4 21h9"/><circle cx="8" cy="21" r="1.4"/></svg>',
+  chair:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4v9a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4"/><path d="M6 20v-3M18 20v-3"/><path d="M6 13h12"/></svg>'
+};
+
+let LISTINGS = [
+  {id:1, name:'Mini Fridge, 1 Semester Used', icon:'fridge', type:'Sale · Dorm Essentials', status:'active', price:3200, meta:'Block A · Room 204'},
+  {id:2, name:'DSLR Camera Rental', icon:'cam', type:'Rental · Hardware Rentals', status:'pending', price:250, meta:'₹250/day · 2 requests waiting'},
+  {id:3, name:'Physics 101 Midterm Notes', icon:'book', type:'Sale · Dorm Essentials', status:'active', price:150, meta:'Digital PDF · instant delivery'},
+  {id:4, name:'Carpet Cleaner Rental', icon:'vac', type:'Rental · Hardware Rentals', status:'completed', price:800, meta:'Returned in good condition'},
+  {id:5, name:'Study Chair, Foldable', icon:'chair', type:'Sale · Dorm Essentials', status:'pending', price:600, meta:'Buyer messaged 20 min ago'},
+  {id:6, name:'Data Structures Textbook', icon:'book', type:'Sale · Dorm Essentials', status:'completed', price:350, meta:'Sold to Priya M.'}
+];
+
+const TABS = [
+  {key:'active', label:'Active'},
+  {key:'pending', label:'Pending'},
+  {key:'completed', label:'Completed'}
+];
+let activeTab='active';
+
+function renderTabs(){
+  document.getElementById('tabs').innerHTML = TABS.map(t=>{
+    const count = LISTINGS.filter(l=>l.status===t.key).length;
+    return `<button class="tab ${t.key===activeTab?'active':''}" data-tab="${t.key}">${t.label} <span class="badge">${count}</span></button>`;
+  }).join('');
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.tab;renderTabs();renderList();}));
+}
+
+function renderStats(){
+  const completed = LISTINGS.filter(l=>l.status==='completed');
+  const total = completed.reduce((s,l)=>s+l.price,0);
+  document.getElementById('totalEarned').textContent = '₹'+total.toLocaleString('en-IN');
+  document.getElementById('activeCount').textContent = LISTINGS.filter(l=>l.status==='active').length;
+  document.getElementById('pendingCount').textContent = LISTINGS.filter(l=>l.status==='pending').length;
+}
+
+function renderList(){
+  const items = LISTINGS.filter(l=>l.status===activeTab);
+  const listEl = document.getElementById('list');
+
+  if(items.length===0){
+    listEl.innerHTML = `<div class="empty"><h3>Nothing here yet</h3><p>Listings you mark as ${activeTab} will show up in this tab.</p></div>`;
+    return;
+  }
+
+  listEl.innerHTML = items.map((l,idx)=>`
+    <div class="row" style="animation-delay:${idx*0.05}s">
+      <div class="row-icon">${ICONS[l.icon]}</div>
+      <div class="row-main">
+        <div class="row-title">${l.name}</div>
+        <div class="row-meta">
+          <span class="mono">${l.type}</span>
+          <span class="status-pill ${l.status}">${l.status[0].toUpperCase()+l.status.slice(1)}</span>
+          <span>${l.meta}</span>
+        </div>
+      </div>
+      <div class="row-price" id="price-${l.id}">₹${l.price.toLocaleString('en-IN')}</div>
+      <div class="row-actions" id="actions-${l.id}">
+        ${actionButtons(l)}
+      </div>
+      <div class="price-edit" id="edit-${l.id}">
+        <input type="number" id="input-${l.id}" value="${l.price}">
+        <button onclick="savePrice(${l.id})">Save</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function actionButtons(l){
+  let btns = `<button class="mbtn" onclick="editPrice(${l.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit price</button>`;
+  if(l.status!=='completed'){
+    btns += `<button class="mbtn sold" onclick="markSold(${l.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Mark as sold</button>`;
+  }
+  btns += `<button class="mbtn del" onclick="deleteListing(${l.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button>`;
+  return btns;
+}
+
+function editPrice(id){
+  document.getElementById('actions-'+id).style.display='none';
+  document.getElementById('price-'+id).style.display='none';
+  document.getElementById('edit-'+id).classList.add('show');
+  document.getElementById('input-'+id).focus();
+}
+function savePrice(id){
+  const val = parseInt(document.getElementById('input-'+id).value);
+  const item = LISTINGS.find(l=>l.id===id);
+  if(val && val>0) item.price = val;
+  renderList(); renderStats();
+  showToast(`Price updated to ₹${item.price.toLocaleString('en-IN')}`);
+}
+function markSold(id){
+  const item = LISTINGS.find(l=>l.id===id);
+  item.status = 'completed';
+  item.meta = 'Marked sold just now';
+  renderTabs(); renderList(); renderStats();
+  showToast(`${item.name} marked as sold`);
+}
+function deleteListing(id){
+  const item = LISTINGS.find(l=>l.id===id);
+  if(!confirm(`Delete "${item.name}"? This can't be undone.`)) return;
+  LISTINGS = LISTINGS.filter(l=>l.id!==id);
+  renderTabs(); renderList(); renderStats();
+  showToast('Listing deleted');
+}
+
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+renderTabs();
+renderList();
+renderStats();
+</script>
+</body>
+</html>
