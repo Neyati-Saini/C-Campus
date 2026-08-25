@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Portfolio · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --theme-main:var(--denim); --theme-soft:var(--denim-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--denim-soft);color:var(--denim);}
+
+  /* Profile header */
+  .profile-head{
+    max-width:1180px;margin:40px auto 0;padding:28px;background:var(--ink);color:var(--paper);
+    border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+    position:relative;overflow:hidden;
+  }
+  .profile-head::after{content:'';position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:var(--denim);opacity:0.25;}
+  .profile-left{display:flex;align-items:center;gap:20px;position:relative;z-index:1;}
+  .avatar-big{width:76px;height:76px;border-radius:18px;background:var(--denim-soft);color:var(--denim);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:1.8rem;font-weight:600;flex-shrink:0;transform:rotate(-3deg);}
+  .profile-name{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;}
+  .profile-meta{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;opacity:0.7;margin-top:4px;}
+  .profile-bio{font-size:0.88rem;opacity:0.85;margin-top:8px;max-width:44ch;}
+  .btn-resume{
+    position:relative;z-index:1;background:var(--paper);color:var(--ink);border:none;padding:13px 22px;
+    border-radius:9px;font-family:'Inter',sans-serif;font-weight:600;font-size:0.86rem;cursor:pointer;
+    display:flex;align-items:center;gap:8px;transition:all .2s ease;white-space:nowrap;
+  }
+  .btn-resume:hover{opacity:0.9;}
+  .btn-resume svg{width:16px;height:16px;}
+  .btn-resume.generating{opacity:0.7;cursor:wait;}
+
+  /* Section */
+  .section-wrap{max-width:1180px;margin:0 auto;padding:0 28px;}
+  .section-head{display:flex;justify-content:space-between;align-items:baseline;margin:40px 0 16px;}
+  .section-head h2{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:500;}
+  .section-head span{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ink-soft);}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-bottom:20px;}
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:12px;padding:18px;opacity:0;transform:translateY(10px);animation:rise .4s ease forwards;transition:transform .2s ease,box-shadow .2s ease;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px -12px rgba(32,36,32,0.18);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .card-title{font-family:'Fraunces',serif;font-size:1rem;font-weight:500;margin-bottom:4px;}
+  .card-sub{font-size:0.76rem;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;margin-bottom:10px;}
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:0.66rem;padding:4px 9px;border-radius:20px;font-weight:500;background:var(--paper);border:1px solid var(--line);}
+
+  .stars{color:var(--theme-main);font-size:0.8rem;letter-spacing:1px;}
+  .earned{font-family:'Fraunces',serif;font-weight:600;color:var(--moss);font-size:1.05rem;margin-top:8px;}
+
+  .empty-line{max-width:1180px;margin:0 auto 40px;padding:0 28px;color:var(--ink-soft);font-size:0.86rem;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){.profile-head{padding:22px;} .profile-name{font-size:1.3rem;} .section-wrap,.profile-head{margin-left:16px;margin-right:16px;} .empty-line{padding-left:16px;padding-right:16px;}}
+</style>
+</head>
+<body>
+
+<div class="profile-head">
+  <div class="profile-left">
+    <div class="avatar-big">NS</div>
+    <div>
+      <div class="profile-name">Neha Sharma</div>
+      <div class="profile-meta">CSE (AI) · Class of 2028 · Chitkara University</div>
+      <div class="profile-bio">Builder of small campus tools. Always mid-way through a MERN side project and a half-finished notebook of ML notes.</div>
+    </div>
+  </div>
+  <button class="btn-resume" id="resumeBtn" onclick="generateResume()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 11h6"/></svg>
+    <span id="resumeBtnText">Generate Resume</span>
+  </button>
+</div>
+
+<div class="section-wrap">
+  <div class="section-head"><h2>Public Repositories</h2><span>PULLED FROM MY REPOSITORIES</span></div>
+  <div class="grid" id="repoGrid"></div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-head"><h2>Completed Gigs</h2><span>PULLED FROM MICRO-GIGS BOARD</span></div>
+  <div class="grid" id="gigGrid"></div>
+</div>
+
+<div class="section-wrap">
+  <div class="section-head"><h2>Past Internships</h2><span>PULLED FROM LOCAL INTERNSHIPS</span></div>
+  <div class="grid" id="internGrid"></div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Resume ready</span></div>
+
+<script>
+const REPOS = [
+  {name:'note-synth-frontend',tech:['React','Tailwind'],updated:'Today'},
+  {name:'pathfinder-viz',tech:['Python','NetworkX'],updated:'3 days ago'},
+  {name:'campushive-sensor-node',tech:['C','Arduino'],updated:'5 days ago'}
+];
+
+const GIGS_DONE = [
+  {title:'Flyer Designer — Club Fair',pay:250,rating:5},
+  {title:'Spreadsheet Cleanup — Alumni Survey',pay:180,rating:4}
+];
+
+const INTERNS_DONE = [
+  {role:'Data Analyst Intern (Summer)',company:'Northside Coffee Roasters',duration:'1-month'}
+];
+
+function renderRepos(){
+  document.getElementById('repoGrid').innerHTML = REPOS.map((r,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <div class="card-title">${r.name}</div>
+      <div class="card-sub">Last updated ${r.updated}</div>
+      <div class="tagrow">${r.tech.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function renderGigs(){
+  const grid = document.getElementById('gigGrid');
+  if(GIGS_DONE.length===0){ grid.parentElement.querySelector('.grid') ; return; }
+  grid.innerHTML = GIGS_DONE.map((g,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <div class="card-title">${g.title}</div>
+      <div class="stars">${'★'.repeat(g.rating)}${'☆'.repeat(5-g.rating)}</div>
+      <div class="earned">$${g.pay} earned</div>
+    </div>
+  `).join('');
+}
+
+function renderInterns(){
+  document.getElementById('internGrid').innerHTML = INTERNS_DONE.map((i,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <div class="card-title">${i.role}</div>
+      <div class="card-sub">${i.company} · ${i.duration}</div>
+    </div>
+  `).join('');
+}
+
+function generateResume(){
+  const btn = document.getElementById('resumeBtn');
+  const label = document.getElementById('resumeBtnText');
+  if(btn.classList.contains('generating') || btn.classList.contains('done')) return;
+  btn.classList.add('generating');
+  label.textContent = 'Compiling…';
+  setTimeout(()=>{
+    btn.classList.remove('generating');
+    btn.classList.add('done');
+    label.textContent = 'Download Resume.pdf';
+    showToast('Resume compiled from your repos, gigs, and internships');
+  }, 1400);
+}
+
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+renderRepos();
+renderGigs();
+renderInterns();
+</script>
+</body>
+</html>

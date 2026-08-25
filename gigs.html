@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Micro-Gigs Board · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --theme-main:var(--denim); --theme-soft:var(--denim-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--denim-soft);color:var(--denim);}
+
+  .hero{padding:40px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--theme-main);}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
+
+  .modeswitch{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;gap:6px;border-bottom:1px solid var(--line);}
+  .mtab{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;padding:12px 6px;margin-right:22px;color:var(--ink-soft);cursor:pointer;position:relative;background:none;border:none;display:flex;align-items:center;gap:7px;}
+  .mtab .badge{background:var(--line);color:var(--ink-soft);font-size:0.62rem;padding:2px 7px;border-radius:10px;}
+  .mtab.active{color:var(--theme-main);}
+  .mtab.active .badge{background:var(--theme-main);color:#fff;}
+  .mtab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--theme-main);}
+
+  .toolbar{max-width:1180px;margin:20px auto 0;padding:0 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  select.filt{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);cursor:pointer;}
+  select.filt:focus{border-color:var(--theme-main);outline:none;}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:16px auto 0;padding:0 28px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;padding:7px 14px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;background:var(--paper-raised);transition:all .18s ease;}
+  .chip:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .chip.active{background:var(--theme-main);color:var(--paper);border-color:var(--theme-main);}
+
+  .count-row{max-width:1180px;margin:20px auto 0;padding:0 28px;display:flex;justify-content:space-between;align-items:center;}
+  .count-row span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+
+  .grid{max-width:1180px;margin:16px auto 90px;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;}
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:20px;opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;transition:transform .25s ease,box-shadow .25s ease;position:relative;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -14px rgba(32,36,32,0.18);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .urgency{position:absolute;top:16px;right:16px;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;padding:4px 10px;border-radius:20px;font-weight:500;}
+  .urgency.urgent{background:var(--brick-soft);color:var(--brick);}
+  .urgency.soon{background:#FDF3D8;color:#9A7B1F;}
+  .urgency.open{background:var(--moss-soft);color:var(--moss);}
+
+  .pay{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:600;color:var(--theme-main);margin:6px 0 4px;}
+  .card-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:500;padding-right:70px;margin-bottom:4px;}
+  .card-meta{font-size:0.78rem;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;margin-bottom:10px;}
+  .card-desc{font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;}
+
+  .card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed var(--line);}
+  .spots{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+  .btn{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;transition:all .2s ease;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--theme-main);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:0.88;}
+  .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:default;}
+
+  /* Posted gigs / applicant tracking */
+  .posted-list{max-width:1180px;margin:16px auto 90px;padding:0 28px;display:flex;flex-direction:column;gap:14px;}
+  .posted-card{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:20px;opacity:0;transform:translateY(10px);animation:rise .4s ease forwards;}
+  .posted-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+  .posted-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:500;}
+  .posted-meta{font-size:0.78rem;color:var(--ink-soft);margin-top:3px;}
+  .applicant-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px dashed var(--line);flex-wrap:wrap;}
+  .applicant-left{display:flex;align-items:center;gap:10px;}
+  .app-avatar{width:34px;height:34px;border-radius:9px;background:var(--denim-soft);color:var(--denim);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:0.85rem;}
+  .app-name{font-size:0.88rem;font-weight:500;}
+  .app-port{font-size:0.76rem;color:var(--theme-main);}
+  .app-actions{display:flex;gap:6px;}
+  .mbtn{font-family:'Inter',sans-serif;font-size:0.76rem;font-weight:600;padding:7px 12px;border-radius:7px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);transition:all .18s ease;}
+  .mbtn:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .mbtn.accepted{background:var(--moss-soft);color:var(--moss);border-color:var(--moss-soft);cursor:default;}
+
+  .empty{max-width:1180px;margin:60px auto;padding:0 28px;text-align:center;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+  .hidden{display:none !important;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(32,36,32,0.45);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:200;}
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal{background:var(--paper-raised);border-radius:16px;padding:28px;width:380px;max-width:90vw;transform:translateY(16px) scale(0.97);transition:transform .22s ease;box-shadow:0 30px 60px -20px rgba(0,0,0,0.3);position:relative;}
+  .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+  .modal h2{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:4px;}
+  .modal .item-name{font-size:0.85rem;color:var(--ink-soft);margin-bottom:18px;}
+  .modal textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:0.88rem;margin-bottom:16px;outline:none;background:var(--paper);min-height:90px;resize:vertical;}
+  .modal textarea:focus{border-color:var(--theme-main);}
+  .modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);cursor:pointer;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .hero,.modeswitch,.toolbar,.chips,.count-row,.grid,.posted-list{padding-left:16px;padding-right:16px;}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="eyebrow">Quick tasks, quick pay</div>
+  <h1>Micro-Gigs Board</h1>
+  <p class="sub">Short, one-off campus tasks — show up, get it done, get paid. Post one yourself and track who applies.</p>
+</section>
+
+<div class="modeswitch" id="modeTabs">
+  <button class="mtab active" data-mode="browse">Browse Gigs <span class="badge" id="browseCount">0</span></button>
+  <button class="mtab" data-mode="posted">My Posted Gigs <span class="badge" id="postedCount">0</span></button>
+</div>
+
+<div id="browseView">
+  <div class="toolbar">
+    <select class="filt mono" id="sortSelect">
+      <option value="urgency">Sort: Most urgent</option>
+      <option value="pay">Sort: Highest pay</option>
+      <option value="recent">Sort: Most recent</option>
+    </select>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="count-row"><span id="countLabel" class="mono">— gigs open</span><span class="mono">DEADLINES SHOWN LIVE</span></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty hidden" id="emptyState"><h3>No gigs in this category</h3><p>Check back soon or try another filter.</p></div>
+</div>
+
+<div id="postedView" class="hidden">
+  <div class="count-row" style="margin-top:20px;"><span class="mono">YOUR POSTED GIGS</span><span class="mono">APPLICANTS SHOWN BELOW EACH GIG</span></div>
+  <div class="posted-list" id="postedList"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Apply for this gig</h2>
+    <p class="item-name" id="modalItemName"></p>
+    <textarea id="modalMsg" placeholder="A line on your availability and why you're a fit…"></textarea>
+    <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="submitApply()">Send application</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Applied</span></div>
+
+<script>
+const GIGS = [
+  {id:1,title:'Event Photographer — Alumni Mixer',cat:'photo',pay:400,unit:'flat',hours:'2 hrs',deadline:'Tonight, 7pm',urgency:'urgent',desc:'Shoot candid photos at the alumni mixer, deliver edited set by morning.',spots:1},
+  {id:2,title:'Flyer Designer — Club Fair',cat:'design',pay:250,unit:'flat',hours:'—',deadline:'By tonight',urgency:'urgent',desc:'One A4 flyer for the spring club fair, brand assets provided.',spots:1},
+  {id:3,title:'Move Boxes — Dept. Office Relocation',cat:'labor',pay:22,unit:'/hr',hours:'5 hrs',deadline:'Wed, 1pm',urgency:'soon',desc:'Help a professor move boxes and furniture between two buildings.',spots:2},
+  {id:4,title:'Flyer Distribution — Orientation Week',cat:'events',pay:15,unit:'/hr',hours:'3 hrs',deadline:'Mon, 9am',urgency:'soon',desc:'Hand out welcome flyers at the main quad during move-in.',spots:6},
+  {id:5,title:'Spreadsheet Cleanup — Alumni Survey',cat:'admin',pay:18,unit:'/hr',hours:'6 hrs',deadline:'This week',urgency:'open',desc:'Clean and tag survey responses, work from anywhere.',spots:4},
+  {id:6,title:'Last-Minute Tutoring Sub',cat:'tutoring',pay:25,unit:'/hr',hours:'1.5 hrs',deadline:'Tomorrow, 3pm',urgency:'soon',desc:'Cover a single Calc I session for a student who is out sick.',spots:1}
+];
+
+const MY_POSTED = [
+  {id:101,title:'Need a Logo Redesign — Study Group Brand',pay:300,unit:'flat',applicants:[
+    {name:'Owen Baptiste',portfolio:'behance.net/owenb',status:'pending'},
+    {name:'Farah Idris',portfolio:'farahidris.design',status:'pending'}
+  ]},
+  {id:102,title:'Weekend Dog-Sitting — Prof. Traveling',pay:20,unit:'/hr',applicants:[
+    {name:'Priya Nandan',portfolio:'—',status:'accepted'},
+    {name:'Marco Ilić',portfolio:'—',status:'pending'}
+  ]}
+];
+
+const CATS=['all','events','design','labor','photo','admin','tutoring'];
+let activeCat='all', activeMode='browse';
+
+function renderModeTabs(){
+  document.getElementById('browseCount').textContent = GIGS.length;
+  document.getElementById('postedCount').textContent = MY_POSTED.length;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.toggle('active', t.dataset.mode===activeMode));
+  document.getElementById('browseView').classList.toggle('hidden', activeMode!=='browse');
+  document.getElementById('postedView').classList.toggle('hidden', activeMode!=='posted');
+}
+document.querySelectorAll('.mtab').forEach(t=>t.addEventListener('click',()=>{activeMode=t.dataset.mode;renderModeTabs();if(activeMode==='posted')renderPosted();}));
+
+function renderChips(){
+  document.getElementById('chips').innerHTML = CATS.map(c=>
+    `<button class="chip ${c===activeCat?'active':''}" data-cat="${c}">${c==='all'?'All categories':c[0].toUpperCase()+c.slice(1)}</button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{activeCat=b.dataset.cat;renderChips();render();}));
+}
+
+const urgencyRank = {urgent:0, soon:1, open:2};
+function render(){
+  const sort = document.getElementById('sortSelect').value;
+  let list = GIGS.filter(g=>activeCat==='all'||g.cat===activeCat);
+  if(sort==='urgency') list=[...list].sort((a,b)=>urgencyRank[a.urgency]-urgencyRank[b.urgency]);
+  if(sort==='pay') list=[...list].sort((a,b)=>b.pay-a.pay);
+
+  document.getElementById('countLabel').textContent = `${list.length} gig${list.length!==1?'s':''} open`;
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+
+  document.getElementById('grid').innerHTML = list.map((g,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <span class="urgency ${g.urgency}">${g.deadline}</span>
+      <div class="pay">$${g.pay}${g.unit==='flat'?' flat':g.unit}</div>
+      <div class="card-title">${g.title}</div>
+      <div class="card-meta">${g.cat.toUpperCase()} · ${g.hours}</div>
+      <div class="card-desc">${g.desc}</div>
+      <div class="card-foot">
+        <span class="spots">${g.spots} spot${g.spots>1?'s':''} left</span>
+        <button class="btn btn-primary" onclick="openModal(${g.id})">Apply</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPosted(){
+  document.getElementById('postedList').innerHTML = MY_POSTED.map((g,idx)=>`
+    <div class="posted-card" style="animation-delay:${idx*0.05}s">
+      <div class="posted-head">
+        <div>
+          <div class="posted-title">${g.title}</div>
+          <div class="posted-meta">Pay: $${g.pay}${g.unit==='flat'?' flat':g.unit} · ${g.applicants.length} applicant${g.applicants.length!==1?'s':''}</div>
+        </div>
+      </div>
+      ${g.applicants.map(a=>`
+        <div class="applicant-row">
+          <div class="applicant-left">
+            <div class="app-avatar">${a.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+            <div>
+              <div class="app-name">${a.name}</div>
+              <div class="app-port">${a.portfolio}</div>
+            </div>
+          </div>
+          <div class="app-actions">
+            <button class="mbtn" data-message="${a.name}">Message</button>
+            <button class="mbtn ${a.status==='accepted'?'accepted':''}" data-accept="${g.id}::${a.name}" ${a.status==='accepted'?'disabled':''}>${a.status==='accepted'?'Accepted ✓':'Accept'}</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  document.querySelectorAll('[data-accept]').forEach(b=>b.addEventListener('click',()=>{
+    const [gigId,name] = b.dataset.accept.split('::');
+    const gig = MY_POSTED.find(g=>g.id==gigId);
+    const app = gig.applicants.find(a=>a.name===name);
+    app.status='accepted';
+    renderPosted();
+    showToast(`${name} accepted for "${gig.title}"`);
+  }));
+  document.querySelectorAll('[data-message]').forEach(b=>b.addEventListener('click',()=>{
+    showToast(`Opening chat with ${b.dataset.message}`);
+  }));
+}
+
+let modalGig=null;
+function openModal(id){
+  modalGig = GIGS.find(g=>g.id===id);
+  document.getElementById('modalItemName').textContent = `${modalGig.title} · $${modalGig.pay}${modalGig.unit==='flat'?' flat':modalGig.unit}`;
+  document.getElementById('modalMsg').value='';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+function submitApply(){
+  if(!modalGig) return;
+  closeModal();
+  showToast(`Application sent for "${modalGig.title}"`);
+}
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal();});
+document.getElementById('sortSelect').addEventListener('change',render);
+
+renderModeTabs();
+renderChips();
+render();
+</script>
+</body>
+</html>

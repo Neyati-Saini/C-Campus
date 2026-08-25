@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Internships · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --theme-main:var(--denim); --theme-soft:var(--denim-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--denim-soft);color:var(--denim);}
+
+  .hero{padding:40px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--theme-main);}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
+
+  .toolbar{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .search-wrap{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;transition:border-color .2s ease;}
+  .search-wrap:focus-within{border-color:var(--theme-main);}
+  .search-wrap svg{flex-shrink:0;opacity:0.5;}
+  .search-wrap input{border:none;outline:none;background:none;font-family:'Inter',sans-serif;font-size:0.9rem;width:100%;color:var(--ink);}
+  select.filt{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);cursor:pointer;}
+  select.filt:focus{border-color:var(--theme-main);outline:none;}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:16px auto 0;padding:0 28px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;padding:7px 14px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;background:var(--paper-raised);transition:all .18s ease;}
+  .chip:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .chip.active{background:var(--theme-main);color:var(--paper);border-color:var(--theme-main);}
+
+  .count-row{max-width:1180px;margin:20px auto 0;padding:0 28px;display:flex;justify-content:space-between;align-items:center;}
+  .count-row span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+
+  .grid{max-width:1180px;margin:16px auto 90px;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:22px;opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;transition:transform .25s ease,box-shadow .25s ease;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -14px rgba(32,36,32,0.18);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .card-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+  .company-mark{width:48px;height:48px;border-radius:11px;background:var(--denim-soft);color:var(--denim);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:1.15rem;flex-shrink:0;transform:rotate(-3deg);}
+  .role-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:500;}
+  .company-name{font-size:0.82rem;color:var(--theme-main);font-weight:600;margin-top:2px;}
+  .blurb{font-size:0.85rem;color:var(--ink-soft);margin-bottom:14px;}
+
+  .detail-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .detail-pill{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;background:var(--paper);border:1px solid var(--line);padding:5px 10px;border-radius:8px;color:var(--ink-soft);}
+  .detail-pill b{color:var(--ink);}
+  .detail-pill.stipend{background:var(--moss-soft);border-color:var(--moss-soft);color:var(--moss);}
+  .detail-pill.stipend b{color:var(--moss);}
+
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;padding:4px 9px;border-radius:20px;font-weight:500;background:var(--denim-soft);color:var(--denim);}
+
+  .card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:14px;border-top:1px dashed var(--line);}
+  .deadline{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+  .btn{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;transition:all .2s ease;display:flex;align-items:center;gap:6px;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--theme-main);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:0.88;}
+  .btn-primary:disabled{background:var(--moss-soft);color:var(--moss);cursor:default;}
+  .btn svg{width:14px;height:14px;}
+
+  .empty{max-width:1180px;margin:60px auto;padding:0 28px;text-align:center;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+  .hidden{display:none !important;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .hero,.toolbar,.chips,.count-row,.grid{padding-left:16px;padding-right:16px;}}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="eyebrow">Real teams, real projects</div>
+  <h1>Local Internships</h1>
+  <p class="sub">Structured internships at companies and departments within reach of campus — apply straight from your saved profile.</p>
+</section>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search role, company, or tech stack…">
+  </div>
+</div>
+
+<div class="chips" id="chips"></div>
+
+<div class="count-row">
+  <span id="countLabel" class="mono">— internships open</span>
+  <span class="mono">RESUME PULLED FROM YOUR PROFILE</span>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty hidden" id="emptyState"><h3>Nothing matches</h3><p>Try a different search or duration filter.</p></div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Resume sent</span></div>
+
+<script>
+const INTERNSHIPS = [
+  {id:1,role:'Junior Frontend Developer',company:'Lattice Analytics',blurb:'Small data-viz startup building dashboards for local logistics firms.',duration:'3-month',stipend:'$1,400/mo',stack:['React','TypeScript'],deadline:'Apply by Sep 10',applied:false},
+  {id:2,role:'Marketing Intern',company:'Northside Coffee Roasters',blurb:'Campus-adjacent roastery growing its social presence and loyalty program.',duration:'1-month',stipend:'$600/mo',stack:['Canva','Instagram Ads'],deadline:'Apply by Sep 3',applied:false},
+  {id:3,role:'Lab Research Assistant',company:'BioCore Diagnostics',blurb:'Diagnostics lab partnering with the Bio department on a assay project.',duration:'3-month',stipend:'$1,100/mo',stack:['Python','Lab Notebook'],deadline:'Apply by Aug 30',applied:false},
+  {id:4,role:'Part-Time Video Editor',company:'Reelframe Startup',blurb:'Small remote video studio producing explainer content for local brands.',duration:'Ongoing',stipend:'$18/hr',stack:['Premiere Pro','After Effects'],deadline:'Rolling',applied:false},
+  {id:5,role:'Social Media Intern',company:'Campus Eats Delivery',blurb:'Student-run delivery app looking to grow its campus ambassador program.',duration:'1-month',stipend:'$500/mo',stack:['TikTok','Content Calendar'],deadline:'Apply by Sep 15',applied:false},
+  {id:6,role:'Data Analyst Intern',company:'Northside Coffee Roasters',blurb:'Help build a simple sales-forecasting sheet across the roastery\'s three locations.',duration:'3-month',stipend:'$900/mo',stack:['Excel','SQL'],deadline:'Apply by Sep 20',applied:false}
+];
+
+const DURATIONS=['all','1-month','3-month','Ongoing'];
+let activeDur='all';
+
+function renderChips(){
+  document.getElementById('chips').innerHTML = DURATIONS.map(d=>
+    `<button class="chip ${d===activeDur?'active':''}" data-dur="${d}">${d==='all'?'Any duration':d}</button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{activeDur=b.dataset.dur;renderChips();render();}));
+}
+
+function render(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const list = INTERNSHIPS.filter(i =>
+    (activeDur==='all'||i.duration===activeDur) &&
+    (!q || i.role.toLowerCase().includes(q) || i.company.toLowerCase().includes(q) || i.stack.some(s=>s.toLowerCase().includes(q)))
+  );
+  document.getElementById('countLabel').textContent = `${list.length} internship${list.length!==1?'s':''} open`;
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+
+  document.getElementById('grid').innerHTML = list.map((i,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      <div class="card-top">
+        <div class="company-mark">${i.company[0]}</div>
+        <div>
+          <div class="role-title">${i.role}</div>
+          <div class="company-name">${i.company}</div>
+        </div>
+      </div>
+      <div class="blurb">${i.blurb}</div>
+      <div class="detail-row">
+        <span class="detail-pill mono">Duration: <b>${i.duration}</b></span>
+        <span class="detail-pill stipend mono">Stipend: <b>${i.stipend}</b></span>
+      </div>
+      <div class="tagrow">${i.stack.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+      <div class="card-foot">
+        <span class="deadline">${i.deadline}</span>
+        <button class="btn btn-primary" data-drop="${i.id}" ${i.applied?'disabled':''}>
+          ${i.applied ? '✓ Resume sent' : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Drop Resume`}
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('[data-drop]').forEach(b=>b.addEventListener('click',()=>{
+    const item = INTERNSHIPS.find(i=>i.id==b.dataset.drop);
+    item.applied = true;
+    render();
+    showToast(`Resume sent to ${item.company} from your profile`);
+  }));
+}
+
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+document.getElementById('searchInput').addEventListener('input',render);
+renderChips();
+render();
+</script>
+</body>
+</html>
