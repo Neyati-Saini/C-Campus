@@ -3,166 +3,234 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Skill Swap</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Skill Swap · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root{ --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4; --moss:#2F6F4E; --moss-soft:#E7F0EA; --brick:#B5502F; --brick-soft:#F5E7DF;}
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --theme-main:var(--moss); --theme-soft:var(--moss-soft);
+  }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:transparent; color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5;}
-  .wrap{max-width:1000px; margin:0 auto; padding:0 32px;}
-  
-  .page-head{padding: 36px 0; text-align: center; display: flex; flex-direction: column; align-items: center;}
-  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--moss); text-transform:uppercase; letter-spacing:0.08em; display:inline-flex; align-items:center; gap:8px; margin-bottom:16px;}
-  .eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--moss);}
-  h1{font-family:'Fraunces',serif; font-weight:500; font-size:clamp(2rem,3.6vw,2.8rem); margin-bottom:16px; letter-spacing:-0.01em;}
-  .page-sub{color:var(--ink-soft); font-size:1.02rem; max-width:56ch; margin-bottom:28px;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--moss-soft);color:var(--moss);}
 
-  .controls{display:flex; gap:12px; justify-content: center; flex-wrap:wrap; margin-bottom: 20px;}
-  select{font-family:'Inter',sans-serif; font-size:0.85rem; padding:10px 14px; border-radius:6px; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink); outline:none;}
-  select:focus{border-color:var(--moss);}
+  .hero{padding:40px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--theme-main);}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
 
-  .btn{font-family:'IBM Plex Mono',monospace; font-size:0.82rem; padding:10px 18px; border-radius:5px; border:1px solid var(--ink); display:inline-block; transition:transform .15s ease; cursor:pointer; background:none;}
-  .btn-primary{background:var(--ink); color:var(--paper);}
-  .btn-primary:hover{transform:translateY(-1px); background:var(--moss); border-color:var(--moss);}
-  .btn-ghost:hover{background:var(--ink); color:var(--paper);}
-  .btn.small{padding:6px 12px; font-size:0.72rem;}
-  .btn[disabled]{opacity:0.55; cursor:default; transform:none;}
+  .toolbar{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .search-wrap{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;transition:border-color .2s ease;}
+  .search-wrap:focus-within{border-color:var(--theme-main);}
+  .search-wrap svg{flex-shrink:0;opacity:0.5;}
+  .search-wrap input{border:none;outline:none;background:none;font-family:'Inter',sans-serif;font-size:0.9rem;width:100%;color:var(--ink);}
+  select.filt{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);cursor:pointer;}
+  select.filt:focus{border-color:var(--theme-main);outline:none;}
 
-  section.content{padding:12px 0 80px;}
-  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:20px; position:relative;}
-  .swap-area{position:relative;}
-  svg.threads{position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;}
+  .count-row{max-width:1180px;margin:20px auto 0;padding:0 28px;display:flex;justify-content:space-between;align-items:center;}
+  .count-row span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
 
-  .card{background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:24px; position:relative; transition:box-shadow .15s ease, transform .15s ease;}
-  .card:hover{box-shadow:0 8px 24px rgba(32,36,32,0.08); transform:translateY(-2px); z-index:5;}
-  .card h3{font-family:'Fraunces',serif; font-weight:500; font-size:1.15rem; margin-bottom:4px;}
-  .card .meta{font-size:0.82rem; color:var(--ink-soft); margin-bottom:14px; display:flex; align-items:center; gap:8px;}
-  .stars{color:var(--brick); font-size:0.82rem; letter-spacing:1px;}
-  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;}
-  .tag{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; padding:4px 9px; border-radius:20px; font-weight:500;}
-  .tag.give{background:var(--moss-soft); color:var(--moss);}
-  .tag.want{background:var(--brick-soft); color:var(--brick);}
-  .card-foot{display:flex; justify-content:flex-end; align-items:center; margin-top:16px; padding-top:16px; border-top:1px dashed var(--line);}
-  .empty{text-align:center; padding:70px 20px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-size:0.85rem;}
+  .swap-area{position:relative;max-width:1180px;margin:16px auto 90px;padding:0 28px;}
+  svg.threads{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px;position:relative;z-index:2;}
 
-  /* Modal */
-  .modal-bg{position:fixed; inset:0; background:rgba(32,36,32,0.45); display:none; align-items:center; justify-content:center; z-index:100;}
-  .modal-bg.show{display:flex;}
-  .modal{background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:28px; width:min(420px,90vw);}
-  .modal h3{font-family:'Fraunces',serif; font-size:1.2rem; margin-bottom:8px;}
-  .modal textarea{width:100%; min-height:90px; font-family:'Inter',sans-serif; font-size:0.88rem; border-radius:6px; border:1px solid var(--line); padding:12px; resize:vertical; margin-bottom:18px;}
-  .modal-actions{display:flex; justify-content:flex-end; gap:10px;}
+  .card{
+    background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;
+    opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;
+    transition:transform .25s ease,box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -14px rgba(32,36,32,0.18);z-index:5;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .match-badge{
+    position:absolute;top:-9px;right:14px;background:var(--theme-main);color:#fff;
+    font-family:'IBM Plex Mono',monospace;font-size:0.6rem;padding:4px 10px;border-radius:20px;
+    box-shadow:0 3px 8px -2px rgba(47,111,78,0.5);
+  }
+
+  .card-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .avatar{width:42px;height:42px;border-radius:11px;background:var(--moss-soft);color:var(--moss);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:1.05rem;flex-shrink:0;transform:rotate(-3deg);}
+  .card-title{font-family:'Fraunces',serif;font-size:1.08rem;font-weight:500;}
+  .card-meta{font-size:0.78rem;color:var(--ink-soft);display:flex;align-items:center;gap:6px;margin-top:2px;}
+  .stars{color:var(--theme-main);letter-spacing:1px;font-size:0.8rem;}
+
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;padding:4px 9px;border-radius:20px;font-weight:500;}
+  .tag.give{background:var(--moss-soft);color:var(--moss);}
+  .tag.want{background:var(--brick-soft);color:var(--brick);}
+
+  .card-foot{display:flex;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);}
+  .btn{padding:9px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;transition:all .2s ease;}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:var(--theme-main);color:#fff;}
+  .btn-primary:hover:not(:disabled){opacity:0.88;}
+  .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:default;}
+
+  .empty{text-align:center;padding:70px 20px;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(32,36,32,0.45);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:200;}
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal{background:var(--paper-raised);border-radius:16px;padding:28px;width:380px;max-width:90vw;transform:translateY(16px) scale(0.97);transition:transform .22s ease;box-shadow:0 30px 60px -20px rgba(0,0,0,0.3);position:relative;}
+  .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+  .modal h2{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:4px;}
+  .modal .item-name{font-size:0.85rem;color:var(--ink-soft);margin-bottom:18px;}
+  .modal textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:0.88rem;margin-bottom:16px;outline:none;background:var(--paper);min-height:90px;resize:vertical;transition:border-color .2s ease;}
+  .modal textarea:focus{border-color:var(--theme-main);}
+  .modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.3rem;color:var(--ink-soft);cursor:pointer;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .hero,.toolbar,.count-row,.swap-area{padding-left:16px;padding-right:16px;}}
 </style>
 </head>
 <body>
 
-<section class="page-head wrap">
+<section class="hero">
+  <div class="eyebrow">Give one, get one</div>
   <h1>Skill Swap</h1>
-  <p class="page-sub">Trade what you know for what you need. No cash changes hands — just skills.</p>
-  <div class="controls">
-    <select id="swapOffered"><option value="">Skill offered — any</option></select>
-    <select id="swapWanted"><option value="">Skill wanted — any</option></select>
-  </div>
+  <p class="sub">Trade what you know for what you need — no cash, just skills. Coach someone through C++ in exchange for a hand with your video edit.</p>
 </section>
 
-<section class="content wrap">
-  <div class="swap-area">
-    <svg class="threads" id="threadSvg"></svg>
-    <div class="grid" id="swapGrid"></div>
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search by name or major…">
   </div>
-</section>
+  <select class="filt mono" id="offeredFilter"><option value="">Skill offered — any</option></select>
+  <select class="filt mono" id="wantedFilter"><option value="">Skill wanted — any</option></select>
+</div>
 
-<div class="modal-bg" id="modalBg">
+<div class="count-row">
+  <span id="countLabel" class="mono">— students trading skills</span>
+  <span class="mono">MUTUAL MATCHES HIGHLIGHTED</span>
+</div>
+
+<div class="swap-area">
+  <svg class="threads" id="threadSvg"></svg>
+  <div class="grid" id="grid"></div>
+  <div class="empty hidden" id="emptyState"><h3>No matches for that combo</h3><p>Try clearing a filter.</p></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <h3 id="modalTitle">Propose a swap</h3>
-    <div class="modal-body" id="modalBody" style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:14px;"></div>
-    <textarea id="modalMsg" placeholder="Say what you're offering and what you'd like in return…"></textarea>
-    <div class="modal-actions">
-      <button class="btn btn-ghost small" id="modalCancel">Cancel</button>
-      <button class="btn btn-primary small" id="modalSend">Send</button>
-    </div>
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Propose a swap</h2>
+    <p class="item-name" id="modalItemName"></p>
+    <textarea id="modalMsg" placeholder="Say what you'd like practice on and when you're free…"></textarea>
+    <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="submitSwap()">Send proposal</button>
   </div>
 </div>
 
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Proposal sent</span></div>
+
 <script>
-const swapUsers = [
-  {name:"Priya Nandan", major:"CS, Junior", rating:4.8, give:["C++ Debugging","LaTeX"], want:["Video Editing"]},
-  {name:"Marco Ilić", major:"Film & Media, Senior", rating:4.6, give:["Video Editing","Color Grading"], want:["C++ Debugging"]},
-  {name:"Asha Verma", major:"EE, Sophomore", rating:4.9, give:["Circuit Design","Soldering"], want:["UI/UX Design"]},
-  {name:"Deon Fischer", major:"Design, Junior", rating:4.4, give:["UI/UX Design","Figma"], want:["Circuit Design"]},
-  {name:"Wei Chen", major:"Stats, Senior", rating:4.7, give:["R / Data Viz"], want:["Public Speaking"]},
-  {name:"Lena Ostrov", major:"Comms, Sophomore", rating:4.5, give:["Public Speaking","Copywriting"], want:["R / Data Viz"]},
+const USERS = [
+  {id:1,name:'Asha Verma',major:'EE, Sophomore',rating:4.9,give:['Circuit Design','Soldering'],want:['UI/UX Design']},
+  {id:2,name:'Deon Fischer',major:'Design, Junior',rating:4.4,give:['UI/UX Design','Figma'],want:['Circuit Design']},
+  {id:3,name:'Nina Kowalski',major:'CS, Senior',rating:4.8,give:['Python Tutoring','SQL Basics'],want:['Spanish Conversation']},
+  {id:4,name:'Rafael Ortiz',major:'Linguistics, Junior',rating:4.6,give:['Spanish Conversation','Essay Editing'],want:['Python Tutoring']},
+  {id:5,name:'Mei Lin Tan',major:'Music, Sophomore',rating:4.7,give:['Guitar Lessons','Music Theory'],want:['Photography']},
+  {id:6,name:'Jonas Weber',major:'Photography, Senior',rating:4.5,give:['Photography','Lightroom Editing'],want:['Guitar Lessons']},
+  {id:7,name:'Farida Haidari',major:'Stats, Junior',rating:4.6,give:['R / Data Viz'],want:['Public Speaking']},
+  {id:8,name:'Ben Okoro',major:'Comms, Sophomore',rating:4.3,give:['Public Speaking','Copywriting'],want:['R / Data Viz']}
 ];
 
-function uniqueSkills(){ const s = new Set(); swapUsers.forEach(u=>{ u.give.forEach(x=>s.add(x)); u.want.forEach(x=>s.add(x)); }); return [...s].sort(); }
-function populateSelect(sel, items){ items.forEach(i=>{ const o=document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o); }); }
-populateSelect(document.getElementById('swapOffered'), uniqueSkills()); populateSelect(document.getElementById('swapWanted'), uniqueSkills());
+function uniqueSkills(){ const s=new Set(); USERS.forEach(u=>{u.give.forEach(x=>s.add(x));u.want.forEach(x=>s.add(x));}); return [...s].sort(); }
+function populate(sel,items){ items.forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o);}); }
+populate(document.getElementById('offeredFilter'),uniqueSkills());
+populate(document.getElementById('wantedFilter'),uniqueSkills());
 
-function findMatchIndex(user, idx){
-  for(let j=0;j<swapUsers.length;j++){
-    if(j===idx) continue;
-    const other = swapUsers[j];
-    if(user.want.some(w=>other.give.includes(w)) && other.want.some(w=>user.give.includes(w))) return j;
-  }
-  return -1;
+function findMatch(user){
+  return USERS.find(o => o.id!==user.id && user.want.some(w=>o.give.includes(w)) && o.want.some(w=>user.give.includes(w)));
 }
 
-function renderSwap(){
-  const offered = document.getElementById('swapOffered').value, wanted = document.getElementById('swapWanted').value;
-  const grid = document.getElementById('swapGrid'); grid.innerHTML = '';
-  const filtered = swapUsers.filter(u => (!offered || u.give.includes(offered)) && (!wanted || u.want.includes(wanted)));
-  if(filtered.length===0){ grid.innerHTML = '<div class="empty">No matches for that combo.</div>'; drawThreads(); return; }
-  filtered.forEach(u=>{
-    const realIdx = swapUsers.indexOf(u);
-    const card = document.createElement('div'); card.className='card'; card.dataset.idx = realIdx;
-    card.innerHTML = `
-      <h3>${u.name}</h3>
-      <div class="meta">${u.major} · <span class="stars">${'★'.repeat(Math.round(u.rating))}${'☆'.repeat(5-Math.round(u.rating))}</span> ${u.rating}</div>
-      <div class="tagrow">${u.give.map(g=>`<span class="tag give">GIVE · ${g}</span>`).join('')}</div>
-      <div class="tagrow">${u.want.map(w=>`<span class="tag want">WANT · ${w}</span>`).join('')}</div>
-      <div class="card-foot"><button class="btn btn-primary small" data-propose="${realIdx}">Propose Swap</button></div>
-    `;
-    card.addEventListener('mouseenter', ()=>highlightMatch(realIdx, true));
-    card.addEventListener('mouseleave', ()=>highlightMatch(realIdx, false));
-    grid.appendChild(card);
-  });
-  grid.querySelectorAll('[data-propose]').forEach(b=>b.addEventListener('click', ()=>openModal(+b.dataset.propose)));
+function render(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const offered=document.getElementById('offeredFilter').value;
+  const wanted=document.getElementById('wantedFilter').value;
+  const list = USERS.filter(u =>
+    (!offered||u.give.includes(offered)) && (!wanted||u.want.includes(wanted)) &&
+    (!q || u.name.toLowerCase().includes(q) || u.major.toLowerCase().includes(q))
+  );
+  document.getElementById('countLabel').textContent = `${list.length} student${list.length!==1?'s':''} trading skills`;
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+
+  document.getElementById('grid').innerHTML = list.map((u,idx)=>{
+    const match = findMatch(u);
+    return `
+    <div class="card" data-id="${u.id}" style="animation-delay:${idx*0.05}s" onmouseenter="highlight(${u.id},true)" onmouseleave="highlight(${u.id},false)">
+      ${match?'<span class="match-badge">⇄ Mutual match</span>':''}
+      <div class="card-top">
+        <div class="avatar">${u.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+        <div>
+          <div class="card-title">${u.name}</div>
+          <div class="card-meta">${u.major} · <span class="stars">${'★'.repeat(Math.round(u.rating))}${'☆'.repeat(5-Math.round(u.rating))}</span> ${u.rating}</div>
+        </div>
+      </div>
+      <div class="tagrow">${u.give.map(g=>`<span class="tag give">GIVES · ${g}</span>`).join('')}</div>
+      <div class="tagrow">${u.want.map(w=>`<span class="tag want">WANTS · ${w}</span>`).join('')}</div>
+      <div class="card-foot"><button class="btn btn-primary" onclick="openModal(${u.id})">Propose Swap</button></div>
+    </div>`;
+  }).join('');
   requestAnimationFrame(drawThreads);
 }
-document.getElementById('swapOffered').addEventListener('change', renderSwap); document.getElementById('swapWanted').addEventListener('change', renderSwap);
 
-let activeThread = null;
-function highlightMatch(idx, on){ activeThread = on ? idx : null; drawThreads(); }
+let activeId=null;
+function highlight(id,on){ activeId = on?id:null; drawThreads(); }
 function drawThreads(){
-  const svg = document.getElementById('threadSvg'), area = document.querySelector('.swap-area'); svg.innerHTML = '';
-  if(activeThread===null) return;
-  const user = swapUsers[activeThread], matchIdx = findMatchIndex(user, activeThread); if(matchIdx===-1) return;
-  const cardA = document.querySelector(`#swapGrid .card[data-idx="${activeThread}"]`), cardB = document.querySelector(`#swapGrid .card[data-idx="${matchIdx}"]`);
-  if(!cardA || !cardB) return;
-  const rectArea = area.getBoundingClientRect(), rA = cardA.getBoundingClientRect(), rB = cardB.getBoundingClientRect();
-  const x1 = rA.left+rA.width/2-rectArea.left, y1 = rA.top+rA.height/2-rectArea.top, x2 = rB.left+rB.width/2-rectArea.left, y2 = rB.top+rB.height/2-rectArea.top;
-  svg.setAttribute('viewBox', `0 0 ${rectArea.width} ${rectArea.height}`);
-  const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-  path.setAttribute('d', `M${x1},${y1} Q${(x1+x2)/2},${(y1+y2)/2 - 30} ${x2},${y2}`);
-  path.setAttribute('stroke', '#2F6F4E'); path.setAttribute('stroke-width','2'); path.setAttribute('fill','none'); path.setAttribute('stroke-dasharray','5 5');
+  const svg=document.getElementById('threadSvg'), area=document.querySelector('.swap-area');
+  svg.innerHTML='';
+  if(activeId===null) return;
+  const user=USERS.find(u=>u.id===activeId); const match=findMatch(user);
+  if(!match) return;
+  const cardA=document.querySelector(`.card[data-id="${activeId}"]`), cardB=document.querySelector(`.card[data-id="${match.id}"]`);
+  if(!cardA||!cardB) return;
+  const rArea=area.getBoundingClientRect(), rA=cardA.getBoundingClientRect(), rB=cardB.getBoundingClientRect();
+  const x1=rA.left+rA.width/2-rArea.left, y1=rA.top+rA.height/2-rArea.top, x2=rB.left+rB.width/2-rArea.left, y2=rB.top+rB.height/2-rArea.top;
+  svg.setAttribute('viewBox',`0 0 ${rArea.width} ${rArea.height}`);
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d',`M${x1},${y1} Q${(x1+x2)/2},${(y1+y2)/2-30} ${x2},${y2}`);
+  path.setAttribute('stroke','#2F6F4E'); path.setAttribute('stroke-width','2'); path.setAttribute('fill','none'); path.setAttribute('stroke-dasharray','5 5');
   svg.appendChild(path);
 }
-window.addEventListener('resize', drawThreads);
+window.addEventListener('resize',drawThreads);
 
-const modalBg = document.getElementById('modalBg'), modalTitle = document.getElementById('modalTitle'), modalBody = document.getElementById('modalBody'), modalMsg = document.getElementById('modalMsg');
-let modalIdx = null;
-function openModal(idx){
-  modalIdx = idx; const u = swapUsers[idx];
-  modalTitle.textContent = `Propose a swap with ${u.name}`; modalBody.textContent = `They give: ${u.give.join(', ')} · They want: ${u.want.join(', ')}`;
-  modalMsg.value = ''; modalBg.classList.add('show'); modalMsg.focus();
+let modalUser=null;
+function openModal(id){
+  modalUser = USERS.find(u=>u.id===id);
+  document.getElementById('modalItemName').textContent = `${modalUser.name} · gives ${modalUser.give.join(', ')}`;
+  document.getElementById('modalMsg').value='';
+  document.getElementById('modalOverlay').classList.add('open');
 }
-document.getElementById('modalCancel').addEventListener('click', ()=>modalBg.classList.remove('show'));
-modalBg.addEventListener('click', e=>{ if(e.target===modalBg) modalBg.classList.remove('show'); });
-document.getElementById('modalSend').addEventListener('click', ()=>{
-  modalBg.classList.remove('show'); const btn = document.querySelector(`[data-propose="${modalIdx}"]`);
-  if(btn){ btn.textContent='Sent ✓'; btn.disabled = true; }
-});
-renderSwap();
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('open'); }
+function submitSwap(){
+  if(!modalUser) return;
+  closeModal();
+  showToast(`Swap proposal sent to ${modalUser.name}`);
+}
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target.id==='modalOverlay')closeModal();});
+document.getElementById('searchInput').addEventListener('input',render);
+document.getElementById('offeredFilter').addEventListener('change',render);
+document.getElementById('wantedFilter').addEventListener('change',render);
+
+render();
 </script>
 </body>
 </html>
