@@ -3,6 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study Guides · C.Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4;
+    --moss:#2F6F4E; --moss-soft:#E7F0EA;
+    --denim:#35597A; --denim-soft:#E5EBF0;
+    --brick:#B5502F; --brick-soft:#F5E7DF;
+    --theme-main:var(--moss); --theme-soft:var(--moss-soft);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  ::selection{background:var(--moss-soft);color:var(--moss);}
+
+  .hero{padding:40px 28px 8px;max-width:1180px;margin:0 auto;}
+  .eyebrow{font-size:0.72rem;color:var(--theme-main);font-weight:500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--theme-main);}
+  h1{font-family:'Fraunces',serif;font-weight:600;font-size:2.6rem;letter-spacing:-0.01em;}
+  .hero p.sub{color:var(--ink-soft);margin-top:8px;font-size:0.98rem;max-width:560px;}
+
+  .toolbar{max-width:1180px;margin:24px auto 0;padding:0 28px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  select.filt{background:var(--paper-raised);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);cursor:pointer;}
+  select.filt:focus{border-color:var(--theme-main);outline:none;}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:16px auto 0;padding:0 28px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;padding:7px 14px;border-radius:20px;border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;background:var(--paper-raised);transition:all .18s ease;}
+  .chip:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .chip.active{background:var(--theme-main);color:var(--paper);border-color:var(--theme-main);}
+
+  .count-row{max-width:1180px;margin:20px auto 0;padding:0 28px;display:flex;justify-content:space-between;align-items:center;}
+  .count-row span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
+
+  .grid{max-width:1180px;margin:16px auto 90px;padding:0 28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:20px;}
+  .card{background:var(--paper-raised);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;opacity:0;transform:translateY(14px);animation:rise .5s ease forwards;transition:transform .25s ease,box-shadow .25s ease;position:relative;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -14px rgba(32,36,32,0.18);}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+
+  .top-badge{position:absolute;top:10px;right:10px;background:var(--theme-main);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;padding:4px 9px;border-radius:20px;z-index:2;}
+  .thumb{height:110px;background:var(--moss-soft);display:flex;align-items:center;justify-content:center;position:relative;}
+  .thumb .filetype{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:0.85rem;color:var(--moss);background:var(--paper-raised);padding:8px 16px;border-radius:8px;letter-spacing:0.04em;}
+
+  .body{padding:16px 16px 6px;display:flex;flex-direction:column;gap:6px;flex:1;}
+  .card-title{font-family:'Fraunces',serif;font-size:1.02rem;font-weight:500;line-height:1.3;}
+  .meta{font-size:0.74rem;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;}
+  .uploader{font-size:0.74rem;color:var(--ink-soft);}
+
+  .card-foot{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 16px;}
+  .vote{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;}
+  .vote button{background:var(--paper);border:1px solid var(--line);width:26px;height:26px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--ink-soft);}
+  .vote button:hover{border-color:var(--theme-main);color:var(--theme-main);}
+  .vote .score{font-weight:700;font-size:0.88rem;min-width:18px;text-align:center;}
+  .fav{background:none;border:none;font-size:20px;cursor:pointer;color:var(--line);transition:transform .15s ease;}
+  .fav:hover{transform:scale(1.15);}
+  .fav.active{color:var(--brick);}
+
+  .empty{max-width:1180px;margin:60px auto;padding:0 28px;text-align:center;color:var(--ink-soft);}
+  .empty h3{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--ink);margin-bottom:6px;}
+  .hidden{display:none !important;}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;opacity:0;pointer-events:none;transition:all .3s ease;z-index:300;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .dot{width:7px;height:7px;border-radius:50%;background:var(--moss);}
+
+  @media (max-width:640px){h1{font-size:2rem;} .hero,.toolbar,.chips,.count-row,.grid{padding-left:16px;padding-right:16px;}}
 <title>Study Guides</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -40,6 +107,109 @@
 </head>
 <body>
 
+<section class="hero">
+  <div class="eyebrow">Crowdsourced & curated</div>
+  <h1>Study Guides</h1>
+  <p class="sub">Notes, past papers, and cheat sheets — ranked by the people who used them to actually pass the class.</p>
+</section>
+
+<div class="toolbar">
+  <select class="filt mono" id="subjFilter"><option value="">Subject — any</option></select>
+  <select class="filt mono" id="profFilter"><option value="">Professor — any</option></select>
+</div>
+
+<div class="chips" id="semChips"></div>
+
+<div class="count-row">
+  <span id="countLabel" class="mono">— guides available</span>
+  <span class="mono">SORTED BY SCORE</span>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty hidden" id="emptyState"><h3>Nothing here yet</h3><p>Be the first to upload for this filter.</p></div>
+
+<div class="toast" id="toast"><span class="dot"></span><span id="toastText">Saved</span></div>
+
+<script>
+const GUIDES = [
+  {id:1,title:'Linear Algebra — Eigenvalues Cheat Sheet',type:'PDF',uploader:'K. Ibarra',date:'Aug 12',sem:"Fall '26",subj:'MATH 214',prof:'Dr. Solberg',score:41},
+  {id:2,title:'Organic Chem — Reaction Map Wk1-8',type:'DOC',uploader:'T. Nakamura',date:'Aug 6',sem:"Fall '26",subj:'CHEM 220',prof:'Dr. Osei',score:29},
+  {id:3,title:'Intro Macroeconomics — Final Review Pack',type:'PDF',uploader:'L. Marsh',date:'Jul 22',sem:"Spring '26",subj:'ECON 101',prof:'Dr. Farouk',score:63},
+  {id:4,title:'Data Structures — Big-O Quick Reference',type:'PDF',uploader:'Neyati S.',date:'Aug 14',sem:"Fall '26",subj:'CS 214',prof:'Dr. Solberg',score:18},
+  {id:5,title:'Probability & Stochastic Processes Notes',type:'DOC',uploader:'R. Chandran',date:'Aug 9',sem:"Fall '26",subj:'CS 261',prof:'Dr. Vance',score:24},
+  {id:6,title:'Cell Biology — Midterm Diagrams',type:'PDF',uploader:'A. Bello',date:'Jul 30',sem:"Summer '26",subj:'BIO 210',prof:'Dr. Osei',score:15}
+];
+
+const favorites = new Set();
+let activeSem = 'all';
+const SEMS = ['all',"Fall '26","Summer '26","Spring '26"];
+
+function populate(sel,items){ items.forEach(i=>{const o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o);}); }
+populate(document.getElementById('subjFilter'), [...new Set(GUIDES.map(g=>g.subj))].sort());
+populate(document.getElementById('profFilter'), [...new Set(GUIDES.map(g=>g.prof))].sort());
+
+function renderChips(){
+  document.getElementById('semChips').innerHTML = SEMS.map(s=>
+    `<button class="chip ${s===activeSem?'active':''}" data-sem="${s}">${s==='all'?'All semesters':s}</button>`
+  ).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{activeSem=b.dataset.sem;renderChips();render();}));
+}
+
+function render(){
+  const subj=document.getElementById('subjFilter').value, prof=document.getElementById('profFilter').value;
+  let list = GUIDES.filter(g => (activeSem==='all'||g.sem===activeSem) && (!subj||g.subj===subj) && (!prof||g.prof===prof));
+  list = [...list].sort((a,b)=>b.score-a.score);
+  const topScore = list.length? list[0].score : null;
+
+  document.getElementById('countLabel').textContent = `${list.length} guide${list.length!==1?'s':''} available`;
+  document.getElementById('emptyState').classList.toggle('hidden', list.length>0);
+
+  document.getElementById('grid').innerHTML = list.map((g,idx)=>`
+    <div class="card" style="animation-delay:${idx*0.05}s">
+      ${g.score===topScore && topScore>0 ? '<span class="top-badge">Top rated</span>' : ''}
+      <div class="thumb"><span class="filetype">${g.type}</span></div>
+      <div class="body">
+        <div class="card-title">${g.title}</div>
+        <div class="meta">${g.subj} · ${g.prof} · ${g.sem}</div>
+        <div class="uploader">Uploaded by ${g.uploader}, ${g.date}</div>
+      </div>
+      <div class="card-foot">
+        <div class="vote">
+          <button data-up="${g.id}">▲</button>
+          <span class="score">${g.score}</span>
+          <button data-down="${g.id}">▼</button>
+        </div>
+        <button class="fav ${favorites.has(g.id)?'active':''}" data-fav="${g.id}">★</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('[data-up]').forEach(b=>b.addEventListener('click',()=>{
+    GUIDES.find(g=>g.id==b.dataset.up).score++; render();
+  }));
+  document.querySelectorAll('[data-down]').forEach(b=>b.addEventListener('click',()=>{
+    GUIDES.find(g=>g.id==b.dataset.down).score--; render();
+  }));
+  document.querySelectorAll('[data-fav]').forEach(b=>b.addEventListener('click',()=>{
+    const id=+b.dataset.fav;
+    if(favorites.has(id)){ favorites.delete(id); showToast('Removed from favorites'); }
+    else { favorites.add(id); showToast('Saved to favorites'); }
+    render();
+  }));
+}
+
+function showToast(text){
+  const t=document.getElementById('toast');
+  document.getElementById('toastText').textContent=text;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+document.getElementById('subjFilter').addEventListener('change',render);
+document.getElementById('profFilter').addEventListener('change',render);
+renderChips();
+render();
 <section class="page-head wrap">
   <h1>Study Guides</h1>
   <p class="page-sub">Notes, past papers, and cheat sheets — crowdsourced. Filter by semester, subject, or professor.</p>
