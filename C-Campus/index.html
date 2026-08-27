@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus — Jobs, Marketplace & Expenses for Students</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --paper-raised:#FFFFFF;
+    --ink:#202420;
+    --ink-soft:#5B6158;
+    --line:#DCD5C4;
+    --moss:#2F6F4E;
+    --moss-soft:#E7F0EA;
+    --brick:#B5502F;
+    --brick-soft:#F5E7DF;
+    --denim:#35597A;
+    --denim-soft:#E5EBF0;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  .mono{
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:0.02em;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:rgba(246,243,236,0.92);
+    backdrop-filter:blur(6px);
+    z-index:50;
+  }
+
+  .header-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:20px 0;
+  }
+
+  .logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'Fraunces',serif;
+    font-size:1.35rem;
+    font-weight:600;
+  }
+
+  .logo-mark{
+    width:30px;height:30px;
+    border-radius:6px;
+    background:var(--ink);
+    color:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.8rem;
+    font-weight:500;
+    transform:rotate(-3deg);
+  }
+
+  nav{
+    display:flex;
+    align-items:center;
+    gap:32px;
+  }
+
+  nav a.nav-link{
+    font-size:0.92rem;
+    color:var(--ink-soft);
+    transition:color .15s ease;
+  }
+
+  nav a.nav-link:hover{color:var(--ink);}
+
+  .btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.82rem;
+    padding:10px 18px;
+    border-radius:5px;
+    border:1px solid var(--ink);
+    display:inline-block;
+    transition:transform .15s ease, background .15s ease, color .15s ease;
+    cursor:pointer;
+    background:none;
+  }
+
+  .btn-primary{
+    background:var(--ink);
+    color:var(--paper);
+  }
+
+  .btn-primary:hover{
+    transform:translateY(-1px);
+    background:var(--moss);
+    border-color:var(--moss);
+  }
+
+  .btn-ghost:hover{
+    background:var(--ink);
+    color:var(--paper);
+  }
+
+  /* nav auth area: swapped by JS depending on login state */
+  #navAuth{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+
+  #navGreeting{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:88px 0 64px;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+
+  .hero::before,
+  .hero::after{
+    display:none;
+  }
+
+  @media (max-width:860px){
+    .hero::before,.hero::after{display:none;}
+  }
+
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:56px;
+    align-items:start;
+  }
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:var(--moss);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:18px;
+  }
+
+  .eyebrow::before{
+    content:"";
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--moss);
+  }
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(2.3rem,4.4vw,3.4rem);
+    line-height:1.06;
+    letter-spacing:-0.01em;
+    margin-bottom:22px;
+  }
+
+  h1 em{
+    font-style:italic;
+    color:var(--moss);
+  }
+
+  .hero-sub{
+    color:var(--ink-soft);
+    font-size:1.05rem;
+    max-width:46ch;
+    margin-bottom:30px;
+  }
+
+  .hero-ctas{
+    display:flex;
+    gap:14px;
+    margin-bottom:38px;
+    flex-wrap:wrap;
+  }
+
+  .hero-ctas .btn{padding:13px 22px;font-size:0.85rem;}
+
+  .trust-row{
+    display:flex;
+    gap:22px;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+    flex-wrap:wrap;
+  }
+
+  .trust-row span{display:flex;align-items:center;gap:6px;}
+
+  .trust-row span::before{
+    content:"✓";
+    color:var(--moss);
+    font-weight:700;
+  }
+
+  /* ---- Planner ledger (signature element) ---- */
+  .ledger{
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 1px 0 var(--line);
+  }
+
+  .ledger-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 20px;
+    border-bottom:1px dashed var(--line);
+  }
+
+  .ledger-head .mono{font-size:0.75rem;color:var(--ink-soft);}
+
+  .ledger-dots{display:flex;gap:6px;}
+
+  .ledger-dots span{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--line);
+  }
+
+  .ledger-row{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:16px;
+    align-items:center;
+    padding:20px;
+    border-bottom:1px solid var(--line);
+    transition:background .15s ease;
+  }
+
+  .ledger-row:last-child{border-bottom:none;}
+
+  .ledger-row:hover{background:var(--paper);}
+
+  .ledger-icon{
+    width:38px;height:38px;
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;
+    font-size:1.1rem;
+    flex-shrink:0;
+  }
+
+  .ledger-row.jobs .ledger-icon{
+    background:var(--moss-soft);
+    color:var(--moss);
+  }
+
+  .ledger-row.market .ledger-icon{
+    background:var(--brick-soft);
+    color:var(--brick);
+  }
+
+  .ledger-row.expenses .ledger-icon{
+    background:var(--denim-soft);
+    color:var(--denim);
+  }
+
+  .ledger-text .title{
+    font-weight:600;
+    font-size:0.98rem;
+    margin-bottom:2px;
+  }
+
+  .ledger-text .desc{
+    font-size:0.82rem;
+    color:var(--ink-soft);
+  }
+
+  .ledger-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    padding:4px 9px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+
+  .ledger-row.jobs .ledger-tag{
+    background:var(--moss-soft);
+    color:var(--moss);
+  }
+
+  .ledger-row.market .ledger-tag{
+    background:var(--brick-soft);
+    color:var(--brick);
+  }
+
+  .ledger-row.expenses .ledger-tag{
+    background:var(--denim-soft);
+    color:var(--denim);
+  }
+
+  /* ---------- Sections ---------- */
+  section{padding:76px 0;}
+
+  .section-head{
+    max-width:56ch;
+    margin-bottom:48px;
+  }
+
+  .section-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:10px;
+  }
+
+  .section-head h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(1.7rem,2.6vw,2.2rem);
+    letter-spacing:-0.01em;
+  }
+
+  .feature-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+
+  @media (max-width:760px){
+    .feature-grid{grid-template-columns:1fr;}
+  }
+
+  .feature-card{
+    background:var(--paper-raised);
+    padding:32px 28px;
+  }
+
+  .feature-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+
+  .feature-card h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:1.2rem;
+    margin-bottom:10px;
+  }
+
+  .feature-card p{
+    color:var(--ink-soft);
+    font-size:0.92rem;
+  }
+
+  /* ---------- How it works ---------- */
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:28px;
+  }
+
+  @media (max-width:760px){
+    .steps{grid-template-columns:1fr 1fr;}
+  }
+
+  .step{
+    padding-top:18px;
+    border-top:2px solid var(--ink);
+  }
+
+  .step .mono{
+    font-size:0.78rem;
+    color:var(--moss);
+    margin-bottom:10px;
+    display:block;
+  }
+
+  .step h4{
+    font-weight:600;
+    font-size:1rem;
+    margin-bottom:6px;
+  }
+
+  .step p{
+    font-size:0.86rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Stats band ---------- */
+  .stats-band{
+    background:var(--ink);
+    color:var(--paper);
+  }
+
+  .stats-band .wrap{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+
+  @media (max-width:760px){
+    .stats-band .wrap{
+      grid-template-columns:1fr;
+      gap:32px;
+    }
+  }
+
+  .stat .num{
+    font-family:'Fraunces',serif;
+    font-size:2.4rem;
+    font-weight:500;
+    color:#fff;
+  }
+
+  .stat .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    color:#B9BFB5;
+    margin-top:6px;
+  }
+
+  /* ---------- CTA ---------- */
+  .cta-block{
+    text-align:center;
+    padding:90px 0;
+  }
+
+  .cta-block h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(1.9rem,3.4vw,2.6rem);
+    max-width:20ch;
+    margin:0 auto 24px;
+  }
+
+  .cta-block .btn{
+    padding:14px 26px;
+    font-size:0.88rem;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0;
+  }
+
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+
+  .footer-inner .mono{
+    font-size:0.75rem;
+    color:var(--ink-soft);
+  }
+
+  .footer-links{
+    display:flex;
+    gap:20px;
+  }
+
+  .footer-links a{
+    font-size:0.82rem;
+    color:var(--ink-soft);
+  }
+
+  .footer-links a:hover{color:var(--ink);}
+
+  /* ---------- Reveal on scroll ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+
+  .reveal.in{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{
+      opacity:1;
+      transform:none;
+      transition:none;
+    }
+
+    html{scroll-behavior:auto;}
+  }
+
+  :focus-visible{
+    outline:2px solid var(--moss);
+    outline-offset:2px;
+  }
+</style>
+</head>
+
+<body>
+
+
+
+<header>
+  <div class="wrap header-inner">
+
+    <div class="logo">
+      <span class="logo-mark">C.</span>Campus
+    </div>
+
+    <nav>
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#footer">About</a>
+
+      <!--
+        FIX: This block is now controlled by JS at the bottom of the page.
+        Logged-out visitors see "Log in / Sign up" (the original markup).
+        Logged-in visitors see a greeting + "Log out" button instead.
+        id="navAuth" is the mount point that gets swapped.
+      -->
+      <div id="navAuth">
+        <a class="btn btn-ghost" href="login.html">Log in</a>
+        <a class="btn btn-primary" href="signup.html">Sign up</a>
+      </div>
+    </nav>
+
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+
+    <div>
+      <div class="eyebrow">Built for your college, not the whole internet</div>
+
+      <h1>
+        Everything campus life runs on, <em>in one login.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Find gigs from students who need help, buy and sell with people down the hall,
+        and keep track of where your money's actually going — all verified to your college email.
+      </p>
+
+      <div class="hero-ctas">
+
+        <a class="btn btn-primary" href="signup.html" id="heroCta">Create free account</a>
+
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+
+      <div class="trust-row">
+        <span>College email required</span>
+        <span>No listing fees</span>
+        <span>Built by students</span>
+      </div>
+    </div>
+
+    <div class="ledger reveal">
+
+      <div class="ledger-head">
+        <span class="mono">TODAY'S BOARD</span>
+
+        <div class="ledger-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="ledger-row jobs">
+        <div class="ledger-icon">J</div>
+
+        <div class="ledger-text">
+          <div class="title">Flyer design for fest committee</div>
+          <div class="desc">Posted 2h ago · ₹800 · 3 applicants</div>
+        </div>
+
+        <span class="ledger-tag">gig</span>
+      </div>
+
+      <div class="ledger-row market">
+        <div class="ledger-icon">M</div>
+
+        <div class="ledger-text">
+          <div class="title">Study table + chair, hostel block C</div>
+          <div class="desc">Posted 5h ago · ₹1,200 · pickup only</div>
+        </div>
+
+        <span class="ledger-tag">for sale</span>
+      </div>
+
+      <div class="ledger-row expenses">
+        <div class="ledger-icon">₹</div>
+
+        <div class="ledger-text">
+          <div class="title">This month's spending</div>
+          <div class="desc">Food ₹3,400 · Books ₹900 · Rent split ₹2,000</div>
+        </div>
+
+        <span class="ledger-tag">on track</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+
+    <div class="section-head reveal">
+      <div class="section-eyebrow">What's inside</div>
+      <h2>Three things every student juggles, finally in one place.</h2>
+    </div>
+
+    <div class="feature-grid reveal">
+
+      <div class="feature-card">
+        <div class="feature-num">01 — Jobs</div>
+        <h3>Micro-gigs & part-time work</h3>
+        <p>
+          Post a task or pick one up — tutoring, design work, event help,
+          freelance code. Rated by the students who hired you.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-num">02 — Marketplace</div>
+        <h3>Buy & sell with your campus</h3>
+        <p>
+          Textbooks, furniture, cycles, electronics. No shipping, no strangers —
+          just people who live where you live.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-num">03 — Expenses</div>
+        <h3>Know where your money goes</h3>
+        <p>
+          Log spending by category, split rent or trip costs with roommates,
+          and get a clear monthly picture — no spreadsheet required.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+
+    <div class="section-head reveal">
+      <div class="section-eyebrow">Getting started</div>
+      <h2>From sign-up to your first gig, in four steps.</h2>
+    </div>
+
+    <div class="steps reveal">
+
+      <div class="step">
+        <span class="mono">01</span>
+        <h4>Verify your college email</h4>
+        <p>Keeps the platform limited to real students at your campus.</p>
+      </div>
+
+      <div class="step">
+        <span class="mono">02</span>
+        <h4>Build your profile</h4>
+        <p>Add your skills, year, and what you're looking for — jobs, buys, or both.</p>
+      </div>
+
+      <div class="step">
+        <span class="mono">03</span>
+        <h4>Post or browse</h4>
+        <p>List a gig, an item to sell, or just browse what's live on campus right now.</p>
+      </div>
+
+      <div class="step">
+        <span class="mono">04</span>
+        <h4>Track as you go</h4>
+        <p>Every sale, gig payout, and expense rolls up into your monthly overview.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="stats-band">
+  <div class="wrap">
+
+    <div class="stat reveal">
+      <div class="num">0 fees</div>
+      <div class="label mono">ON PEER-TO-PEER LISTINGS</div>
+    </div>
+
+    <div class="stat reveal">
+      <div class="num">1 login</div>
+      <div class="label mono">FOR JOBS, MARKET & EXPENSES</div>
+    </div>
+
+    <div class="stat reveal">
+      <div class="num">100% campus</div>
+      <div class="label mono">VERIFIED STUDENT EMAILS ONLY</div>
+    </div>
+
+  </div>
+</div>
+
+<section class="cta-block">
+  <div class="wrap">
+
+    <h2 class="reveal">
+      Your campus already runs on favors and side-hustles. Give it a home.
+    </h2>
+
+    <a class="btn btn-primary reveal" href="signup.html" id="ctaBlockBtn">Create free account</a>
+
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="wrap footer-inner">
+
+    <span class="mono">CAMPUS © 2026 — A STUDENT PROJECT</span>
+
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#">Contact</a>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+  // ---------- Scroll reveal (unchanged) ----------
+  const revealEls = document.querySelectorAll('.reveal');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  revealEls.forEach(el => io.observe(el));
+
+  /* ---------------------------------------------------------
+     FIX: Login-state awareness.
+     Old homepage always showed "Log in / Sign up" even after a
+     student had logged in. We now check localStorage/sessionStorage
+     for 'campusLoggedInEmail' (set by login.html) and, if present,
+     swap the nav to a greeting + Log out button, and look up the
+     matching user's name from the 'campusUsers' array to greet them
+     by name.
+  --------------------------------------------------------- */
+
+  function getLoggedInEmail() {
+    return localStorage.getItem('campusLoggedInEmail')
+        || sessionStorage.getItem('campusLoggedInEmail');
+  }
+
+  function getUsers() {
+    try {
+      const data = JSON.parse(localStorage.getItem('campusUsers'));
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('campusLoggedInEmail');
+    sessionStorage.removeItem('campusLoggedInEmail');
+    window.location.reload();
+  }
+
+  function renderNavAuth() {
+    const navAuth = document.getElementById('navAuth');
+    const heroCta = document.getElementById('heroCta');
+    const ctaBlockBtn = document.getElementById('ctaBlockBtn');
+    const loggedInEmail = getLoggedInEmail();
+
+    if (!loggedInEmail) {
+      // Logged out: keep default Log in / Sign up buttons (already in markup)
+      return;
+    }
+
+    // Logged in: find the user's name for a friendly greeting
+    const users = getUsers();
+    const currentUser = users.find(u => u.email === loggedInEmail);
+    const displayName = currentUser ? currentUser.name.split(' ')[0] : 'there';
+
+    navAuth.innerHTML = `
+      <span id="navGreeting" class="mono">Hi, ${displayName}</span>
+      <a class="btn btn-ghost" href="#" id="logoutBtn">Log out</a>
+    `;
+
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
+
+    // Update hero / bottom CTAs so a logged-in student isn't asked
+    // to "Create free account" again
+    if (heroCta) {
+      heroCta.textContent = 'Go to your dashboard';
+      heroCta.href = '#'; // replace with your real dashboard page when built
+    }
+    if (ctaBlockBtn) {
+      ctaBlockBtn.textContent = 'Go to your dashboard';
+      ctaBlockBtn.href = '#';
+    }
+  }
+
+  renderNavAuth();
+</script>
+
+</body>
+</html>

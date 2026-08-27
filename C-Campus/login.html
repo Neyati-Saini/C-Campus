@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — Campus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --paper-raised:#FFFFFF;
+    --ink:#202420;
+    --ink-soft:#5B6158;
+    --line:#DCD5C4;
+    --moss:#2F6F4E;
+    --moss-soft:#E7F0EA;
+    --brick:#B5502F;
+    --brick-soft:#F5E7DF;
+    --denim:#35597A;
+    --denim-soft:#E5EBF0;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+
+  a{color:inherit;text-decoration:none;}
+  .mono{font-family:'IBM Plex Mono',monospace;letter-spacing:0.02em;}
+  :focus-visible{outline:2px solid var(--moss);outline-offset:2px;}
+
+  .screen{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  @media (max-width:860px){
+    .screen{grid-template-columns:1fr;}
+    .side{display:none;}
+  }
+
+  .side{
+    background:var(--ink);
+    color:var(--paper);
+    padding:48px;
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .side::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      repeating-linear-gradient(180deg, transparent, transparent 43px, rgba(246,243,236,0.05) 43px, rgba(246,243,236,0.05) 44px);
+    pointer-events:none;
+  }
+  .side-logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Fraunces',serif;font-size:1.25rem;font-weight:600;
+    position:relative;
+    z-index:1;
+  }
+  .side-logo .logo-mark{
+    width:28px;height:28px;border-radius:6px;
+    background:var(--paper);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:0.75rem;
+    transform:rotate(-3deg);
+  }
+
+  .side-quote{
+    position:relative;
+    z-index:1;
+    max-width:34ch;
+  }
+  .side-quote .mono{
+    font-size:0.75rem;
+    color:#9BA398;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:14px;
+    display:block;
+  }
+  .side-quote h2{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:1.7rem;
+    line-height:1.3;
+    letter-spacing:-0.01em;
+  }
+  .side-quote h2 em{color:#8FBFA0;font-style:italic;}
+
+  .side-ledger{
+    position:relative;
+    z-index:1;
+    border:1px solid rgba(246,243,236,0.14);
+    border-radius:10px;
+    background:rgba(246,243,236,0.04);
+    backdrop-filter:blur(2px);
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    opacity:0;
+    animation:floatIn .7s ease .3s forwards;
+  }
+  .side-ledger .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#6FBF8C;
+    flex-shrink:0;
+    box-shadow:0 0 0 0 rgba(111,191,140,0.5);
+    animation:pulse 2.2s ease-in-out infinite;
+  }
+  .side-ledger .txt .t1{font-size:0.86rem;font-weight:500;}
+  .side-ledger .txt .t2{font-size:0.75rem;color:#9BA398;margin-top:2px;}
+
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(111,191,140,0.45);}
+    70%{box-shadow:0 0 0 8px rgba(111,191,140,0);}
+    100%{box-shadow:0 0 0 0 rgba(111,191,140,0);}
+  }
+  @keyframes floatIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .form-panel{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:48px 32px;
+  }
+  .form-wrap{
+    width:100%;
+    max-width:380px;
+    opacity:0;
+    transform:translateY(12px);
+    animation:floatIn .6s ease .1s forwards;
+  }
+
+  .mobile-logo{
+    display:none;
+    align-items:center;gap:10px;
+    font-family:'Fraunces',serif;font-size:1.2rem;font-weight:600;
+    margin-bottom:36px;
+  }
+  .mobile-logo .logo-mark{
+    width:26px;height:26px;border-radius:6px;
+    background:var(--ink);color:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;
+    transform:rotate(-3deg);
+  }
+  @media (max-width:860px){
+    .mobile-logo{display:flex;}
+  }
+
+  .form-head{margin-bottom:32px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    color:var(--moss);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:12px;
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--moss);}
+  .form-head h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:2rem;
+    letter-spacing:-0.01em;
+    margin-bottom:8px;
+  }
+  .form-head p{color:var(--ink-soft);font-size:0.92rem;}
+  .form-head p a{color:var(--moss);font-weight:600;border-bottom:1px solid transparent;transition:border-color .15s ease;}
+  .form-head p a:hover{border-color:var(--moss);}
+
+  .field{
+    position:relative;
+    margin-bottom:20px;
+  }
+  .field input{
+    width:100%;
+    padding:20px 16px 8px;
+    font-family:'Inter',sans-serif;
+    font-size:0.96rem;
+    color:var(--ink);
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .field input:focus{
+    border-color:var(--moss);
+    box-shadow:0 0 0 3px var(--moss-soft);
+  }
+  .field label{
+    position:absolute;
+    left:16px;
+    top:16px;
+    font-size:0.96rem;
+    color:var(--ink-soft);
+    pointer-events:none;
+    transform-origin:left top;
+    transition:transform .15s ease, color .15s ease, top .15s ease;
+  }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label{
+    top:9px;
+    transform:scale(0.72);
+    color:var(--moss);
+  }
+  .field input::placeholder{color:transparent;}
+
+  .field.has-toggle input{padding-right:44px;}
+  .pw-toggle{
+    position:absolute;
+    right:14px;
+    top:15px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    padding:4px;
+    transition:color .15s ease;
+  }
+  .pw-toggle:hover{color:var(--ink);}
+
+  .field-error{
+    font-size:0.78rem;
+    color:var(--brick);
+    margin-top:6px;
+    display:none;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .field.invalid input{border-color:var(--brick);}
+  .field.invalid .field-error{display:block;}
+
+  .row-between{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:24px;
+    font-size:0.85rem;
+  }
+  .checkbox-row{display:flex;align-items:center;gap:8px;color:var(--ink-soft);}
+  .checkbox-row input{accent-color:var(--moss);width:15px;height:15px;}
+  .forgot-link{color:var(--moss);font-weight:600;}
+  .forgot-link:hover{text-decoration:underline;}
+
+  .btn-submit{
+    width:100%;
+    padding:15px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.88rem;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .btn-submit:hover{background:var(--moss);}
+  .btn-submit:active{transform:scale(0.98);}
+  .btn-submit.loading{color:transparent;}
+  .btn-submit .spinner{
+    position:absolute;
+    top:50%;left:50%;
+    width:16px;height:16px;
+    margin:-8px 0 0 -8px;
+    border:2px solid rgba(246,243,236,0.35);
+    border-top-color:var(--paper);
+    border-radius:50%;
+    opacity:0;
+    animation:none;
+  }
+  .btn-submit.loading .spinner{
+    opacity:1;
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin:28px 0;
+    color:var(--ink-soft);
+    font-size:0.78rem;
+    font-family:'IBM Plex Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .divider::before,.divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  .btn-alt{
+    width:100%;
+    padding:13px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:0.9rem;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:border-color .15s ease, transform .1s ease;
+  }
+  .btn-alt:hover{border-color:var(--ink);}
+  .btn-alt:active{transform:scale(0.98);}
+  .btn-alt .dot-icon{
+    width:16px;height:16px;
+    border-radius:4px;
+    background:var(--denim-soft);
+    color:var(--denim);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.65rem;
+  }
+
+  .foot-note{
+    text-align:center;
+    margin-top:28px;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .form-wrap,.side-ledger{animation:none;opacity:1;transform:none;}
+    .side-ledger .dot{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="side">
+    <div class="side-logo"><span class="logo-mark">C.</span>Campus</div>
+
+    <div class="side-quote">
+      <span class="mono">Welcome back</span>
+      <h2>Pick up right where you left off — <em>your gigs, your listings, your ledger.</em></h2>
+    </div>
+
+    <div class="side-ledger">
+      <span class="dot"></span>
+      <div class="txt">
+        <div class="t1">2 new applicants on your flyer gig</div>
+        <div class="t2">Since your last visit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-wrap">
+      <div class="mobile-logo"><span class="logo-mark">C.</span>Campus</div>
+
+      <div class="form-head">
+        <div class="eyebrow">Log in</div>
+        <h1>Good to see you.</h1>
+        <p>New here? <a href="signup.html">Create a free account</a></p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div class="field" id="emailField">
+          <input type="email" id="email" placeholder=" " autocomplete="email" required>
+          <label for="email">College email</label>
+          <div class="field-error">Enter a valid college email address</div>
+        </div>
+
+        <div class="field has-toggle" id="pwField">
+          <input type="password" id="password" placeholder=" " autocomplete="current-password" required>
+          <label for="password">Password</label>
+          <button type="button" class="pw-toggle mono" id="pwToggle">SHOW</button>
+          <div class="field-error">Password must be at least 8 characters</div>
+        </div>
+
+        <div class="row-between">
+          <label class="checkbox-row">
+            <input type="checkbox" id="keepLoggedIn" checked>
+            Keep me logged in
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Log in
+          <span class="spinner"></span>
+        </button>
+      </form>
+
+      <div class="divider">or continue with</div>
+      <button class="btn-alt" type="button">
+        <span class="dot-icon">G</span>
+        Continue with college Google account
+      </button>
+
+      <p class="foot-note">By continuing you agree to Campus's Terms and Privacy Policy.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+  const emailField = document.getElementById('emailField');
+  const email = document.getElementById('email');
+
+  const pwField = document.getElementById('pwField');
+  const password = document.getElementById('password');
+
+  const pwToggle = document.getElementById('pwToggle');
+  const keepLoggedIn = document.getElementById('keepLoggedIn');
+
+  const form = document.getElementById('loginForm');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Show / hide password
+  pwToggle.addEventListener('click', () => {
+    const isPassword = password.type === 'password';
+    password.type = isPassword ? 'text' : 'password';
+    pwToggle.textContent = isPassword ? 'HIDE' : 'SHOW';
+  });
+
+  // Email validation
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  // Remove error while typing
+  email.addEventListener('input', () => emailField.classList.remove('invalid'));
+  password.addEventListener('input', () => pwField.classList.remove('invalid'));
+
+  /* ---------------------------------------------------------
+     FIX: Read from the SAME multi-user array ('campusUsers')
+     that signup.html now writes to, instead of a single
+     'campusUser' object. We .find() the matching user by email
+     rather than comparing against one hardcoded saved user.
+  --------------------------------------------------------- */
+  function getUsers() {
+    try {
+      const data = JSON.parse(localStorage.getItem('campusUsers'));
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  // LOGIN
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const enteredEmail = email.value.trim().toLowerCase();
+    const enteredPassword = password.value;
+
+    // Basic validation
+    const emailOk = validEmail(enteredEmail);
+    const pwOk = enteredPassword.length >= 8;
+
+    emailField.classList.toggle('invalid', !emailOk);
+    pwField.classList.toggle('invalid', !pwOk);
+
+    if (!emailOk || !pwOk) return;
+
+    const users = getUsers();
+
+    if (users.length === 0) {
+      alert('No account found. Please sign up first.');
+      window.location.href = 'signup.html';
+      return;
+    }
+
+    // Find matching user by email in the array
+    const matchedUser = users.find(u => u.email === enteredEmail);
+
+    if (!matchedUser) {
+      alert('No account found. Please sign up first.');
+      window.location.href = 'signup.html';
+      return;
+    }
+
+    if (enteredPassword !== matchedUser.password) {
+      alert('Incorrect email or password.');
+      return;
+    }
+
+    // Correct login
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    setTimeout(() => {
+      // FIX: store which user is logged in (by email), and respect
+      // the "Keep me logged in" checkbox using sessionStorage vs
+      // localStorage as appropriate.
+      if (keepLoggedIn.checked) {
+        localStorage.setItem('campusLoggedInEmail', matchedUser.email);
+      } else {
+        sessionStorage.setItem('campusLoggedInEmail', matchedUser.email);
+      }
+
+      window.location.href = 'index.html';
+    }, 800);
+  });
+
+</script>
+
+</body>
+</html>

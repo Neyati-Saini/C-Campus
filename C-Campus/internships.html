@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Internships</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{ --paper:#F6F3EC; --paper-raised:#FFFFFF; --ink:#202420; --ink-soft:#5B6158; --line:#DCD5C4; --denim:#35597A; --denim-soft:#E5EBF0;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:transparent; color:var(--ink); font-family:'Inter',sans-serif; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 32px;}
+
+  .page-head{padding: 36px 0; text-align: center; display: flex; flex-direction: column; align-items: center;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:0.78rem; color:var(--denim); text-transform:uppercase; letter-spacing:0.08em; display:inline-flex; align-items:center; gap:8px; margin-bottom:16px;}
+  .eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--denim);}
+  h1{font-family:'Fraunces',serif; font-weight:500; font-size:clamp(2rem,3.6vw,2.8rem); margin-bottom:16px; letter-spacing:-0.01em;}
+  .page-sub{color:var(--ink-soft); font-size:1.02rem; max-width:56ch; margin-bottom:28px;}
+
+  .controls{display:flex; gap:12px; justify-content: center; flex-wrap:wrap; margin-bottom: 20px;}
+  select, input[type=text]{font-family:'Inter',sans-serif; font-size:0.85rem; padding:10px 14px; border-radius:6px; border:1px solid var(--line); background:var(--paper-raised); color:var(--ink); outline:none;}
+  input[type=text]{min-width:220px;}
+  select:focus, input:focus{border-color:var(--denim);}
+
+  .btn{font-family:'IBM Plex Mono',monospace; font-size:0.72rem; padding:8px 14px; border-radius:5px; border:1px solid var(--ink); display:inline-block; transition:transform .15s ease; cursor:pointer; background:none;}
+  .btn-primary{background:var(--ink); color:var(--paper);}
+  .btn-primary:hover{transform:translateY(-1px); background:var(--denim); border-color:var(--denim);}
+  .btn[disabled]{opacity:0.55; cursor:default; transform:none;}
+
+  section.content{padding:12px 0 80px;}
+  .doclist{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper-raised);}
+  .doc{display:grid; grid-template-columns:auto 1fr auto auto; gap:16px; align-items:center; padding:18px 20px; border-bottom:1px solid var(--line); transition:background .15s ease;}
+  .doc:last-child{border-bottom:none;}
+  .doc:hover{background:rgba(246,243,236,0.5);}
+  .doc .thumb{width:44px;height:44px;border-radius:8px;flex-shrink:0;background:var(--denim);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:1rem;font-weight:600;}
+  .doc .info h4{font-family:'Fraunces',serif; font-weight:500; font-size:1.02rem; margin-bottom:3px;}
+  .doc .info .meta{font-size:0.78rem; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+  .badge{font-family:'IBM Plex Mono',monospace; font-size:0.7rem; padding:4px 9px; border-radius:20px; font-weight:500; background:var(--denim-soft); color:var(--denim); white-space:nowrap;}
+  .save{background:none; border:none; cursor:pointer; font-size:18px; color:var(--line);}
+  .save.active{color:var(--denim);}
+  .empty{text-align:center; padding:70px 20px; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace; font-size:0.85rem;}
+</style>
+</head>
+<body>
+
+<section class="page-head wrap">
+  <h1>Local Internships</h1>
+  <p class="page-sub">Internships at companies within reach of campus, verified and posted by students who've worked there.</p>
+  <div class="controls">
+    <input type="text" id="iSearch" placeholder="Search role or company…">
+    <select id="iFormat"><option value="">Format — any</option></select>
+  </div>
+</section>
+
+<section class="content wrap">
+  <div class="doclist" id="iList"></div>
+</section>
+
+<script>
+const internships = [
+  {role:"Part-Time Video Editor", company:"Reelframe Startup", init:"R", format:"Remote", deadline:"Aug 28", posted:"J. Alvarez"},
+  {role:"Marketing Intern", company:"Northside Coffee Roasters", init:"N", format:"Campus-adjacent", deadline:"Sep 3", posted:"M. Lund"},
+  {role:"Junior Frontend Dev", company:"Lattice Analytics", init:"L", format:"Hybrid", deadline:"Sep 10", posted:"Priya N."},
+  {role:"Lab Research Assistant", company:"BioCore Diagnostics", init:"B", format:"On-site", deadline:"Aug 30", posted:"S. Okafor"},
+  {role:"Social Media Intern", company:"Campus Eats Delivery", init:"C", format:"Remote", deadline:"Sep 15", posted:"Wei C."},
+];
+
+function populateSelect(sel, items){ items.forEach(i=>{ const o=document.createElement('option'); o.value=i; o.textContent=i; sel.appendChild(o); }); }
+populateSelect(document.getElementById('iFormat'), [...new Set(internships.map(i=>i.format))]);
+
+const saved = new Set();
+function renderInternships(){
+  const q = document.getElementById('iSearch').value.toLowerCase();
+  const format = document.getElementById('iFormat').value;
+  const list = document.getElementById('iList'); list.innerHTML='';
+  const filtered = internships.filter(i =>
+    (!format || i.format === format) &&
+    (!q || i.role.toLowerCase().includes(q) || i.company.toLowerCase().includes(q))
+  );
+  if(filtered.length===0){ list.innerHTML = '<div class="empty">No internships match — try a different search.</div>'; return; }
+  filtered.forEach(i=>{
+    const row = document.createElement('div'); row.className='doc';
+    row.innerHTML = `
+      <div class="thumb">${i.init}</div>
+      <div class="info"><h4>${i.role}</h4><div class="meta">${i.company} · posted by ${i.posted} · apply by ${i.deadline}</div></div>
+      <span class="badge">${i.format}</span>
+      <button class="save ${saved.has(i.role)?'active':''}" data-save="${i.role}">★</button>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click', ()=>{
+    const t=b.dataset.save; saved.has(t) ? saved.delete(t) : saved.add(t); renderInternships();
+  }));
+}
+document.getElementById('iSearch').addEventListener('input', renderInternships);
+document.getElementById('iFormat').addEventListener('change', renderInternships);
+renderInternships();
+</script>
+</body>
+</html>
