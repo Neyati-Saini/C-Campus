@@ -131,19 +131,16 @@
     transform: scaleX(1);
   }
 
-  /* Blank spacer to keep tabs centered after removing the button */
   .topbar-spacer {
     width: 200px;
   }
 
-  /* ---------- Main Application Window ---------- */
   .app-container {
     display: flex;
     flex: 1;
     overflow: hidden;
   }
 
-  /* ---------- Contextual Sidebar ---------- */
   .sidebar {
     width: 260px;
     background: var(--paper-raised);
@@ -184,7 +181,6 @@
     font-weight: 500;
   }
 
-  /* ---------- Main Content Area (Ledger) ---------- */
   .main-content {
     flex: 1;
     padding: 40px;
@@ -199,8 +195,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Brief highlight so a visitor arriving from a specific homepage
-     row/card can see exactly where they landed */
+  
   @keyframes arrivalPulse {
     0%   { box-shadow: 0 0 0 0 var(--theme-main); }
     100% { box-shadow: 0 0 0 8px rgba(0,0,0,0); }
@@ -238,7 +233,7 @@
     border-bottom: 1px dashed var(--line);
     background: var(--theme-soft);
     transition: background-color 0.4s ease;
-    cursor: pointer; /* Added pointer cursor */
+    cursor: pointer; 
   }
   .ledger-head:hover { opacity: 0.9; }
   .ledger-head .mono { font-size: 0.75rem; color: var(--theme-main); }
@@ -251,7 +246,7 @@
     padding: 20px;
     border-bottom: 1px solid var(--line);
     transition: background 0.15s ease;
-    cursor: pointer; /* Added pointer cursor */
+    cursor: pointer; 
   }
   .ledger-row:last-child { border-bottom: none; }
   .ledger-row:hover { background: var(--paper); }
@@ -280,7 +275,6 @@
     transition: background-color 0.4s ease, color 0.4s ease;
   }
 
-  /* ---------- Read-Only Blur ---------- */
   .sensitive-data {
     filter: blur(5px);
     user-select: none;
@@ -294,7 +288,6 @@
     user-select: auto;
   }
 
-  /* ---------- Login Modal Popup ---------- */
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -390,7 +383,6 @@
 </head>
 <body>
 
-  <!-- Top Bar -->
   <header class="os-topbar">
     <div class="os-controls">
       <div class="logo" onclick="openModal()">
@@ -405,19 +397,14 @@
       <button class="tab-btn" onclick="switchWorkspace('workplace')">Workplace</button>
     </div>
 
-    <!-- Empty div to keep the flexbox layout balanced -->
     <div class="topbar-spacer"></div>
   </header>
 
-  <!-- App Window -->
   <div class="app-container" id="app">
     
-    <!-- Dynamic Sidebar -->
     <aside class="sidebar" id="sidebar">
-      <!-- Sidebar content injected via JS -->
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
       <div class="content-header">
         <h1 id="workspace-title">Academics Hub</h1>
@@ -425,20 +412,17 @@
       </div>
 
       <div class="ledger">
-        <!-- Added click handler to trigger modal if locked -->
         <div class="ledger-head" onclick="handleFeedInteraction()">
           <span class="mono" id="ledger-title">LIVE ACADEMIC FEED</span>
           <span class="mono">VERIFIED STUDENTS ONLY</span>
         </div>
         
         <div id="ledger-rows">
-          <!-- Ledger rows injected via JS -->
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Login Modal -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-content">
       <button class="modal-close" onclick="closeModal()">×</button>
@@ -453,7 +437,6 @@
   </div>
 
 <script>
-  // Workspace Data & Configuration
   const workspaces = {
     academics: {
       themeMain: 'var(--moss)',
@@ -513,11 +496,9 @@
 
   let isAuthenticated = false;
 
-  // Initialization
+
   function init() {
-    // If a visitor arrived from a specific homepage link (e.g. dash.html?tab=workplace),
-    // open straight to that workspace instead of always defaulting to Academics.
-    const params = new URLSearchParams(window.location.search);
+   const params = new URLSearchParams(window.location.search);
     const requested = params.get('tab');
     const startTab = Object.keys(workspaces).includes(requested) ? requested : 'academics';
 
@@ -527,8 +508,7 @@
 
     renderWorkspace(startTab);
 
-    // Little pulse on the feed header so the jump from the homepage feels
-    // like landing somewhere specific, not a jarring page swap.
+    
     const ledgerHead = document.querySelector('.ledger-head');
     if (ledgerHead) {
       ledgerHead.classList.add('just-arrived');
@@ -536,7 +516,6 @@
     }
   }
 
-  // Switch Tabs Logic
   function switchWorkspace(workspaceId) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('active');
@@ -547,30 +526,23 @@
     renderWorkspace(workspaceId);
   }
 
-  // Active Sidebar Item Logic
   function setActiveSidebar(clickedElement) {
     const lis = clickedElement.parentElement.querySelectorAll('li');
     lis.forEach(li => li.classList.remove('active'));
     clickedElement.classList.add('active');
   }
 
-  // Load feature into iframe
   function loadFeature(clickedElement, url) {
     setActiveSidebar(clickedElement);
     
     const mainContent = document.querySelector('.main-content');
     
     if (url) {
-      // If a URL is attached to the sidebar item, load the iframe
       mainContent.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>`;
-      // Optional: remove padding on main-content so the iframe fits edge-to-edge
       mainContent.style.padding = '0';
     } else {
-      // If there is no URL (e.g. for features you haven't built yet), re-render the workspace default view
       const currentWorkspaceId = document.querySelector('.tab-btn.active').innerText.toLowerCase();
-      // Restore padding just in case it was removed by an iframe
       mainContent.style.padding = '40px'; 
-      // Repopulate with the default ledger HTML structure from your renderWorkspace function
       const data = workspaces[currentWorkspaceId];
       mainContent.innerHTML = `
         <div class="content-header">
@@ -598,14 +570,12 @@
       `;
     }
   }
-  // Render the Selected Workspace
   function renderWorkspace(id) {
     const data = workspaces[id];
 
     document.documentElement.style.setProperty('--theme-main', data.themeMain);
     document.documentElement.style.setProperty('--theme-soft', data.themeSoft);
 
-    // Render Sidebar with onclick event attached
     const sidebarHtml = `
       <div class="sidebar-section">
         <h3>Menu</h3>
@@ -618,12 +588,7 @@
     `;
     document.getElementById('sidebar').innerHTML = sidebarHtml;
 
-    // Rebuild main-content from scratch every time a top-level tab is
-    // clicked. A previous visit to a module page replaces #main-content
-    // with an <iframe>, which removes the #workspace-title / #ledger-rows
-    // elements this function used to reach into directly -- doing that
-    // caused every tab switch after the first module visit to silently
-    // fail. Rebuilding the markup here first keeps it reliable.
+    
     const mainContent = document.querySelector('.main-content');
     mainContent.style.padding = '40px';
     mainContent.innerHTML = `
@@ -651,11 +616,7 @@
       </div>
     `;
 
-    // Jump straight into this workspace's first module page (the sidebar
-    // item marked active, falling back to the first item) instead of
-    // stopping on the ledger view -- so clicking Academics / Marketplace /
-    // Workplace in the top nav takes you to that workspace's own default
-    // page rather than a generic landing view.
+    
     const defaultItem = data.sidebar.find(item => item.active) || data.sidebar[0];
     if (defaultItem && defaultItem.url) {
       const targetLi = [...document.querySelectorAll('#sidebar .sidebar-nav li')]
@@ -664,14 +625,12 @@
     }
   }
 
-  // Interaction check for Feed / Ledger Head
   function handleFeedInteraction() {
     if (!isAuthenticated) {
       openModal();
     }
   }
 
-  // Modal Functions
   function openModal() {
     const modalTitle = document.getElementById('modal-title');
     const modalDesc = document.getElementById('modal-desc');
@@ -703,7 +662,6 @@
     isAuthenticated = false;
     document.getElementById('app').classList.remove('unlocked');
     
-    // Reset modal form HTML for next login
     document.getElementById('modal-form').innerHTML = `
       <input type="email" class="modal-input" placeholder="student@college.edu" />
       <button class="modal-btn" onclick="simulateLogin()">Continue</button>
@@ -712,7 +670,6 @@
     closeModal();
   }
 
-  // Close modal if clicking outside the content
   document.getElementById('loginModal').addEventListener('click', function(e) {
     if (e.target === this) {
       closeModal();
